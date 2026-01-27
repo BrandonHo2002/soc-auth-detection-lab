@@ -1,4 +1,1 @@
-learning git and zed
-second commit practice
-the third diff
-this is an edit from the github
+this file is going to be used to practice
