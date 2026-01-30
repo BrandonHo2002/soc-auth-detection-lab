@@ -6,7 +6,7 @@ from datetime import datetime
 import numpy as np
 from sklearn.ensemble import IsolationForest
 
-LOG_FILE = "/var/log/project_auth/pro_auth.log"
+LOG_FILE = "logs/pro_auth.log"
 WINDOW_SLEEP = 10
 ALERT_COOLDOWN = 30
 FAILED_THRESHOLD = 5
