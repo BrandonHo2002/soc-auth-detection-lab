@@ -58,7 +58,7 @@ def calculate_severity(failed, success, locked):
         return "HIGH"
     if failed >= 3:
         return "MEDIUM"
-    return "low"
+    return "LOW"
 
 
 def emit_json_alert(user, failed, success, locked, severity):
