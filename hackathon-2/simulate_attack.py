@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 
-LOG_FILE = "/var/log/project_auth/pro_auth.log"
+LOG_FILE = "logs/pro_auth.log"
 ATTACKER = "attacker1"
 ATTEMPTS = 10
 DELAY = 1
