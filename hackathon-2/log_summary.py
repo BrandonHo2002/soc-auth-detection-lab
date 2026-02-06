@@ -1,7 +1,7 @@
 import json
 import time
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 import numpy as np
 from sklearn.ensemble import IsolationForest
@@ -69,7 +69,7 @@ def emit_json_alert(user, failed, success, locked, severity):
     )
 
     alert = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "user": user,
         "failed_attempts": int(failed),
         "successful_logins": int(success),

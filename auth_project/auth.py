@@ -56,7 +56,7 @@ def update_user_field(username, field, value):
         "role",
         "mfa_secret",
     }:
-        raise ValueError("Invalid filed update")
+        raise ValueError("Invalid field update")
     with db_connect() as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -83,7 +83,7 @@ def enable_mfa(username):
     mfa_secret = record["mfa_secret"]
 
     if mfa_secret:
-        print("\nMFAis already enabled for this user.")
+        print("\nMFA is already enabled for this user.")
         print("Your current foratted secret is:", format_secret(mfa_secret))
     else:
         secret = pyotp.random_base32()
@@ -270,7 +270,7 @@ def login_user():
             if current_time < lockout_until:
                 cooldown_left = lockout_until - current_time
                 print(f"try again in {cooldown_left} seconds.")
-                log_event(f"Account loked; {username}")
+                log_event(f"Account locked; {username}")
                 return None, None
             else:
                 update_user_field(username, "locked", 0)
@@ -296,16 +296,31 @@ def login_user():
                 )
             return None, None
 
-        if mfa_secret:
+        if role == "admin":
+            if not mfa_secret:
+                print("Admin accounts must enable MFA before login")
+                return None, None
             totp = pyotp.TOTP(mfa_secret)
             code = input("Enter your 6-digit MFA code: ").strip()
             if not code.isdigit() or len(code) != 6:
-                print(f"MFA forat error for user: {username}")
+                print(f"MFA format error for user: {username}")
                 return None, None
-            if not totp.verify(code):
+            if not totp.verify(code, valid_window=1):
+                log_event(f"[AUTH_PROJECT_FAIL] MFA failed for: {username}")
                 print("Incorrect MFA code")
+                time.sleep(1)
                 return None, None
-            print("MFA verifed")
+            print("MFA verified")
+        elif mfa_secret:
+            totp = pyotp.TOTP(mfa_secret)
+            code = input("Enter your 6-digit MFA code: ").strip()
+
+            if totp.verify(code, valid_window=1):
+                print("MFA verified.")
+            else:
+                print("Incorrect MFA code.")
+                log_event(f"[AUTH_PROJECT_FAIL] MFA failed for: {username}")
+                return None, None
 
         update_user_field(username, "failed_attempts", 0)
         update_user_field(username, "locked", 0)

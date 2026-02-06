@@ -1,0 +1,13 @@
+2026-02-03 10:44:06 - New user registered: UberYoko0987
+2026-02-03 12:33:06 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-03 12:33:35 - [AUTH_PROJECT_SUCCESS] user logged in: admin
+2026-02-03 12:45:32 - New user registered: testuser123
+2026-02-03 12:45:42 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:47:55 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:48:20 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:51:10 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:52:15 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:54:15 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-03 12:56:19 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-04 12:59:41 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-04 12:59:56 - [AUTH_PROJECT_FAIL] MFA failed for: UberYoko0987
