@@ -8,6 +8,7 @@ import time
 
 import bcrypt
 import pyotp
+import qrcode
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -84,19 +85,71 @@ def enable_mfa(username):
 
     if mfa_secret:
         print("\nMFA is already enabled for this user.")
-        print("Your current foratted secret is:", format_secret(mfa_secret))
-    else:
-        secret = pyotp.random_base32()
-        with db_connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "UPDATE users SET mfa_secret = ? WHERE username = ?", (secret, username)
-            )
-            conn.commit()
+        print("Current secret is:", format_secret(mfa_secret))
+        return
 
-        print("\nMFA enabled. Generating Secret code...")
+    print("\nChoose MFA setup method:")
+    print("1. QR Code (recommended)")
+    print("2. Manual scret key")
+
+    choice = input("Select option (1 or 2): ").strip()
+
+    if choice not in {"1", "2"}:
+        print("Invalid choice")
+        return
+
+    secret = pyotp.random_base32()
+    with db_connect() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE users SET mfa_secret = ? WHERE username = ?", (secret, username)
+        )
+        conn.commit()
+
+    totp = pyotp.TOTP(secret)
+
+    if choice == "1":
+        uri = totp.provisioning_uri(name=username, issuer_name="AuthProject")
+
+        img = qrcode.make(uri)
+        filename = f"{username}_mfa_qr.png"
+        img.save(filename)
+
+        print("\nMFA enabled using QR code.")
+        print("Scan this QR code with google Authenticator:")
+        print(f"Saved as {filename}")
+
+    else:
+        print("\nMFA enabled using manual secret.")
+        print("Enter this key into Google Authenticator:")
         print(f"your secret key is: {format_secret(secret)}")
-        print("\nopen Google Authenticator -> Add -> Enter setup key manually.\n")
+    print("\nMFA setup complete")
+
+
+def disable_mfa(username):
+    record = get_user(username)
+
+    if not record:
+        print("User not found")
+        return
+    if record["role"] == "admin":
+        print("Admin cannot diable MFA.")
+
+    password = getpass.getpass("Re-enter your password: ")
+    peppered = password + PEPPER
+
+    stored = record["password"]
+    if isinstance(stored, memoryview):
+        stored = stored.tobyptes()
+
+    if not bcrypt.checkpw(peppered.encode(), stored):
+        print("Password incorrect.")
+        log_event(f"[AUTH_PROJECT_FAIL] MFA disable failed for: {username}")
+        return
+
+    update_user_field(username, "mfa_secret", None)
+    log_event(f"[SECURITY] MFA disabled for user: {username}")
+    print("MFA has been disable.")
 
 
 def format_secret(secret):
@@ -294,6 +347,7 @@ def login_user():
                 print(
                     f"Too many failed attempts. Account locked for: {lock_duration} seconds."
                 )
+                log_event(f"Account locked; {username}")
             return None, None
 
         if role == "admin":
@@ -431,6 +485,7 @@ def login_page(username):
         print("1. Change Password")
         print("2. Return to Login")
         print("3. Exit")
+        print("4. disable MFA")
         choice = input("Enter an option: ")
 
         if choice == "1":
@@ -439,6 +494,8 @@ def login_page(username):
             return "logout"
         elif choice == "3":
             return "exit"
+        elif choice == "4":
+            disable_mfa(username)
         else:
             print("Invalid option. Try again.")
 

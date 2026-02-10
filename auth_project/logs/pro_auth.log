@@ -11,3 +11,45 @@
 2026-02-03 12:56:19 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
 2026-02-04 12:59:41 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
 2026-02-04 12:59:56 - [AUTH_PROJECT_FAIL] MFA failed for: UberYoko0987
+2026-02-06 11:48:41 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 10:36:57 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 11:16:07 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 11:21:39 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 11:21:45 - [SECURITY] MFA disabled for user: testuser123
+2026-02-08 12:30:42 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 12:30:50 - [SECURITY] MFA disabled for user: testuser123
+2026-02-08 12:31:10 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-08 12:31:38 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 12:31:44 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 12:31:49 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 13:00:55 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-08 13:01:07 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 13:01:14 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 13:01:19 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 10:47:06 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-09 10:47:15 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 10:47:20 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 10:47:24 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:16 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:24 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-09 11:00:31 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:37 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:42 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:51:29 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-09 11:51:42 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:51:47 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:51:53 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:04:26 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-10 10:04:33 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:04:39 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:04:45 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:28:07 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:28:12 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:28:18 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:34:55 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-10 10:36:08 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:36:13 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:36:18 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:36:25 - Account locked; testuser123
+2026-02-10 12:33:33 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-10 12:34:50 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
