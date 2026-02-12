@@ -1,20 +1,17 @@
-import json
 import os
 import time
 from collections import defaultdict
 from datetime import datetime, timezone
 
 import numpy as np
+from alert import send_alert
 from sklearn.ensemble import IsolationForest
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, "logs", "pro_auth.log")
 
 WINDOW_SLEEP = 5
-ALERT_COOLDOWN = 30
 FAILED_THRESHOLD = 5
-
-alerted_users = {}
 
 model = IsolationForest(n_estimators=100, contamination=0.1, random_state=42)
 trained = False
@@ -63,66 +60,65 @@ def calculate_severity(failed, success, locked):
     return "LOW"
 
 
-def emit_alert(user, failed, success, locked, severity):
-    alert = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "user": user,
-        "failed_attempts": failed,
-        "successful_logins": success,
-        "account_locked": locked,
-        "severity": severity,
-        "source": "auth-log-monitor",
-    }
-
-    print("\n ALERT ")
-    print(json.dumps(alert, indent=2))
-
-
 print("[LOG AGENT] Monitoring started...")
 print(f"[LOG AGENT] Watching: {LOG_FILE}")
 
-while True:
-    users, X, failed_map, success_map, locked_map = summarize_logs()
-    now = time.time()
+try:
+    while True:
+        users, X, failed_map, success_map, locked_map = summarize_logs()
 
-    # ---- Summary heartbeat ----
-    print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Summary:")
-    for user in users:
-        print(
-            f"  {user} → failed={failed_map[user]}, "
-            f"success={success_map[user]}, locked={locked_map[user]}"
-        )
+        # ---- Summary heartbeat ----
+        print(f"\n[{datetime.now().strftime('%H:%M:%S')}] Summary:")
+        for user in users:
+            print(
+                f"  {user} → failed={failed_map[user]}, "
+                f"success={success_map[user]}, locked={locked_map[user]}"
+            )
 
-    # ---- Threshold alerts ----
-    for user in users:
-        failed = failed_map[user]
-        success = success_map[user]
-        locked = locked_map[user]
+        # ---- Threshold-based alerts ----
+        for user in users:
+            failed = failed_map[user]
+            success = success_map[user]
+            locked = locked_map[user]
 
-        if failed >= FAILED_THRESHOLD:
-            last = alerted_users.get(user, 0)
-            if now - last > ALERT_COOLDOWN:
-                severity = calculate_severity(failed, success, locked)
-                emit_alert(user, failed, success, locked, severity)
-                alerted_users[user] = now
+            if failed >= FAILED_THRESHOLD:
+                alert = {
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "user": user,
+                    "failed_attempts": failed,
+                    "successful_logins": success,
+                    "account_locked": locked,
+                    "severity": calculate_severity(failed, success, locked),
+                    "source": "auth-log-monitor",
+                }
+                send_alert(alert)
 
-    # ---- ML anomaly detection ----
-    if len(X) > 0:
-        if not trained:
-            model.fit(X)
-            trained = True
-            print("[MODEL] Baseline trained")
-        else:
-            preds = model.predict(X)
-            for user, pred, vec in zip(users, preds, X):
-                if pred == -1:
-                    failed, success, locked = vec
-                    emit_alert(
-                        user,
-                        failed,
-                        success,
-                        locked,
-                        "ANOMALY",
-                    )
+        # ---- ML anomaly detection ----
+        if len(X) > 0:
+            if not trained:
+                model.fit(X)
+                trained = True
+                print("[MODEL] Baseline trained")
+            else:
+                preds = model.predict(X)
+                for user, pred, vec in zip(users, preds, X):
+                    if pred == -1:
+                        failed, success, locked = vec
+                        alert = {
+                            "timestamp": datetime.now(timezone.utc).isoformat(),
+                            "user": user,
+                            "failed_attempts": failed,
+                            "successful_logins": success,
+                            "account_locked": locked,
+                            "severity": "ANOMALY",
+                            "source": "auth-log-monitor",
+                        }
+                        send_alert(alert)
 
-    time.sleep(WINDOW_SLEEP)
+        time.sleep(WINDOW_SLEEP)
+
+except KeyboardInterrupt:
+    print("\n[LOG AGENT] Stopped by user")
+except Exception as e:
+    print("\n[LOG AGENT] Fatal error occurred")
+    print(f"Error: {e}")

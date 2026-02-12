@@ -53,3 +53,17 @@
 2026-02-10 10:36:25 - Account locked; testuser123
 2026-02-10 12:33:33 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
 2026-02-10 12:34:50 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-10 12:54:41 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-10 12:54:47 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-10 12:54:53 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-10 12:54:53 - Account locked; UberYoko0987
+2026-02-11 08:43:41 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-12 08:15:16 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-12 08:15:47 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:15:52 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:15:57 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:15:57 - Account locked; testuser123
+2026-02-12 08:28:03 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:28:08 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:28:14 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:28:14 - Account locked; testuser123
