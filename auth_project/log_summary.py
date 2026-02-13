@@ -85,9 +85,9 @@ try:
                 alert = {
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "user": user,
-                    "failed_attempts": failed,
-                    "successful_logins": success,
-                    "account_locked": locked,
+                    "failed_attempts": int(failed),
+                    "successful_logins": int(success),
+                    "account_locked": int(locked),
                     "severity": calculate_severity(failed, success, locked),
                     "source": "auth-log-monitor",
                 }
@@ -107,9 +107,9 @@ try:
                         alert = {
                             "timestamp": datetime.now(timezone.utc).isoformat(),
                             "user": user,
-                            "failed_attempts": failed,
-                            "successful_logins": success,
-                            "account_locked": locked,
+                            "failed_attempts": int(failed),
+                            "successful_logins": int(success),
+                            "account_locked": int(locked),
                             "severity": "ANOMALY",
                             "source": "auth-log-monitor",
                         }
