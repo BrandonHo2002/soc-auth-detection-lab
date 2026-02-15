@@ -32,16 +32,16 @@ def summarize_logs():
             if not line.startswith(today):
                 continue
 
-            if "[AUTH_PROJECT_FAIL]" in line:
+            if "[AUTH_PROJECT_LOGIN_FAIL]" in line:
                 user = line.split("for:")[-1].strip()
                 failed[user] += 1
 
-            elif "[AUTH_PROJECT_SUCCESS]" in line and "logged in" in line:
-                user = line.split("logged in:")[-1].strip()
+            elif "[AUTH_PROJECT_LOGIN_SUCCESS]" in line:
+                user = line.split("for:")[-1].strip()
                 success[user] += 1
 
-            elif "Account locked" in line:
-                user = line.split("Account locked;")[-1].strip()
+            elif "[AUTH_PROJECT_ACCOUNT_LOCK]" in line:
+                user = line.split(";")[-1].strip()
                 locked[user] += 1
 
     users = list(set(failed) | set(success) | set(locked))

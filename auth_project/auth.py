@@ -112,7 +112,7 @@ def enable_mfa(username):
         uri = totp.provisioning_uri(name=username, issuer_name="AuthProject")
 
         img = qrcode.make(uri)
-        filename = f"{username}_mfa_qr.png"
+        filename = os.path.join(BASE_DIR, f"{username}_mfa_qr.png")
         img.save(filename)
 
         print("\nMFA enabled using QR code.")
@@ -133,14 +133,15 @@ def disable_mfa(username):
         print("User not found")
         return
     if record["role"] == "admin":
-        print("Admin cannot diable MFA.")
+        print("Admin cannot disable MFA.")
+        return
 
     password = getpass.getpass("Re-enter your password: ")
     peppered = password + PEPPER
 
     stored = record["password"]
     if isinstance(stored, memoryview):
-        stored = stored.tobyptes()
+        stored = stored.tobytes()
 
     if not bcrypt.checkpw(peppered.encode(), stored):
         print("Password incorrect.")
@@ -148,7 +149,7 @@ def disable_mfa(username):
         return
 
     update_user_field(username, "mfa_secret", None)
-    log_event(f"[SECURITY] MFA disabled for user: {username}")
+    log_event(f"[AUTH_PROJECT_MFA_DISABLE] MFA disabled for user: {username}")
     print("MFA has been disable.")
 
 
@@ -187,7 +188,7 @@ def validate_username(username):
 
     username = username.strip()
 
-    if len(username) not in range(3, 21):
+    if len(username) not in range(4, 21):
         return False
     if not username.isalnum():
         return False
@@ -239,6 +240,9 @@ def load_pepper():
 
 
 PEPPER = load_pepper()
+if not PEPPER:
+    print("Fatal error: authentication pepper not loaded.")
+    sys.exit(1)
 
 
 def create_user():
@@ -260,10 +264,6 @@ def create_user():
         print("password do not match")
         time.sleep(1)
         return
-    if looks_malicious(password):
-        print("Invalid password. Input rejected for security.")
-        time.sleep(1)
-        return
     valid, msg = validate_password(password)
     if not valid:
         print(msg)
@@ -281,10 +281,12 @@ def create_user():
             )
             conn.commit()
             print("user created successfully!")
-            log_event(f"New user registered: {username}")
+            log_event(f"[AUTH_PROJECT_USER_REGISTER] New user registered: {username}")
         except sqlite3.IntegrityError:
             print("Username already exists")
-            log_event(f"Failed registration attempt: {username} (already exists)")
+            log_event(
+                f"[AUTH_PROJECT_USER_REGISTER_FAIL] registration failed for: {username}"
+            )
             time.sleep(1)
 
 
@@ -295,7 +297,7 @@ def login_user():
         if looks_malicious(username) or looks_malicious(password):
             print("Invalid input.")
             log_event(
-                f"SQL injection attempt detected during login (username: {username})"
+                f"[AUTH_PROJECT_SECURITY_INPUT_REJECT] malicious input detected for: {username}"
             )
             return None, None
 
@@ -303,6 +305,9 @@ def login_user():
 
         if not record:
             print("User not found.")
+            log_event(
+                f"[AUTH_PROJECT_LOGIN_FAIL] Unknown user login attempt: {username}"
+            )
             return None, None
 
         stored_password = record["password"]
@@ -323,7 +328,9 @@ def login_user():
             if current_time < lockout_until:
                 cooldown_left = lockout_until - current_time
                 print(f"try again in {cooldown_left} seconds.")
-                log_event(f"Account locked; {username}")
+                log_event(
+                    f"[AUTH_PROJECT_ACCOUNT_LOCKED_ACTIVE] Account locked; {username}"
+                )
                 return None, None
             else:
                 update_user_field(username, "locked", 0)
@@ -338,7 +345,7 @@ def login_user():
             failed_attempts += 1
             update_user_field(username, "failed_attempts", failed_attempts)
             print("Incorrect password")
-            log_event(f"[AUTH_PROJECT_FAIL] Login attempt failed for: {username}")
+            log_event(f"[AUTH_PROJECT_LOGIN_FAIL] Login failed for: {username}")
             if failed_attempts >= 3:
                 lock_duration = 300
                 new_lockout = current_time + lock_duration
@@ -347,7 +354,7 @@ def login_user():
                 print(
                     f"Too many failed attempts. Account locked for: {lock_duration} seconds."
                 )
-                log_event(f"Account locked; {username}")
+                log_event(f"[AUTH_PROJECT_ACCOUNT_LOCK] Account locked; {username}")
             return None, None
 
         if role == "admin":
@@ -360,7 +367,7 @@ def login_user():
                 print(f"MFA format error for user: {username}")
                 return None, None
             if not totp.verify(code, valid_window=1):
-                log_event(f"[AUTH_PROJECT_FAIL] MFA failed for: {username}")
+                log_event(f"[AUTH_PROJECT_MFA_FAIL] MFA failed for: {username}")
                 print("Incorrect MFA code")
                 time.sleep(1)
                 return None, None
@@ -373,14 +380,14 @@ def login_user():
                 print("MFA verified.")
             else:
                 print("Incorrect MFA code.")
-                log_event(f"[AUTH_PROJECT_FAIL] MFA failed for: {username}")
+                log_event(f"[AUTH_PROJECT_MFA_FAIL] MFA failed for: {username}")
                 return None, None
 
         update_user_field(username, "failed_attempts", 0)
         update_user_field(username, "locked", 0)
         update_user_field(username, "lockout_until", 0)
 
-        log_event(f"[AUTH_PROJECT_SUCCESS] user logged in: {username}")
+        log_event(f"[AUTH_PROJECT_LOGIN_SUCCESS] login successful for: {username}")
 
         if role == "admin":
             return ("admin", username)
@@ -420,7 +427,9 @@ def update_password(username):
     newpass = getpass.getpass("Enter new password (leave blank to cancel): ")
 
     if not newpass:
-        print("Password changed cancelled.")
+        log_event(
+            f"[AUTH_PROJECT_PASSWORD_CHANGE_CANCEL] Password change cancelled for: {username}"
+        )
         return
 
     valid, msg = validate_password(newpass)
@@ -446,7 +455,9 @@ def update_password(username):
             )
             conn.commit()
             print("Password successfully updated.")
-            log_event(f"Password changed for: {username}")
+            log_event(
+                f"[AUTH_PROJECT_PASSWORD_CHANGE] Password changed for: {username}"
+            )
     except Exception as e:
         log_event(f"[ERROR] update_password failed for {username}: {e}")
         print("password update failed")
@@ -468,7 +479,7 @@ def unlock_user():
         return
 
     if not user["locked"]:
-        print(f"{target_user} account is not lock")
+        print(f"{target_user} account is not locked")
         return
 
     update_user_field(target_user, "failed_attempts", 0)
@@ -476,7 +487,7 @@ def unlock_user():
     update_user_field(target_user, "lockout_until", 0)
 
     print(f"{target_user}'s account has been unlocked.")
-    log_event(f"Account unlocked by admin: {target_user}")
+    log_event(f"[AUTH_PROJECT_ACCOUNT_UNLOCK] Account unlocked for: {target_user}")
 
 
 def login_page(username):
