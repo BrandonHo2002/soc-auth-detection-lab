@@ -90,7 +90,7 @@ def enable_mfa(username):
 
     print("\nChoose MFA setup method:")
     print("1. QR Code (recommended)")
-    print("2. Manual scret key")
+    print("2. Manual secret key")
 
     choice = input("Select option (1 or 2): ").strip()
 
