@@ -33,7 +33,7 @@ The monitoring system evaluates authentication activity using multiple signals:
 - Login frequency anomalies per user
 - Isolation Forest anomaly scores for behavioral deviations
 
-Alerts are generated only when thresholds are exceeded and are subject to cooldowns to reduce alert fatigue.
+Alerts are generated only when thresholds are exceeded, with repeat alerts suppressed per user to reduce alert fatigue.
 
 ---
 
@@ -136,3 +136,9 @@ python log_summary.py
 ```bash
 python auth.py
 ```
+
+## Limitations and Future Improvements
+- Log ingestion is file-based rather than streaming
+- Thresholds are static and not adaptive
+- Model retraining is manual
+- No centralized alert storage or dashboard

@@ -145,7 +145,7 @@ def disable_mfa(username):
 
     if not bcrypt.checkpw(peppered.encode(), stored):
         print("Password incorrect.")
-        log_event(f"[AUTH_PROJECT_FAIL] MFA disable failed for: {username}")
+        log_event(f"[AUTH_PROJECT_MFA_FAIL] MFA disable failed for: {username}")
         return
 
     update_user_field(username, "mfa_secret", None)
@@ -249,7 +249,9 @@ def create_user():
     username = input("enter a new username: ").strip()
     if looks_malicious(username):
         print("Invalid username. Input rejected for security.")
-        log_event(f"SQL injection attempt detected in username field: {username}")
+        log_event(
+            f"[AUTH_PROJECT_SECURITY_INPUT_REJECT] SQL injection attempt in username field: {username}"
+        )
         time.sleep(1)
         return
     if not validate_username(username):
@@ -387,7 +389,7 @@ def login_user():
         update_user_field(username, "locked", 0)
         update_user_field(username, "lockout_until", 0)
 
-        log_event(f"[AUTH_PROJECT_LOGIN_SUCCESS] login successful for: {username}")
+        log_event(f"[AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: {username}")
 
         if role == "admin":
             return ("admin", username)

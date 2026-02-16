@@ -67,3 +67,31 @@
 2026-02-12 08:28:08 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
 2026-02-12 08:28:14 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
 2026-02-12 08:28:14 - Account locked; testuser123
+2026-02-13 12:45:49 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:45:54 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:45:58 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:45:58 - Account locked; testuser123
+2026-02-13 12:46:09 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:46:16 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:46:23 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:46:23 - Account locked; UberYoko0987
+2026-02-13 12:47:38 - [AUTH_PROJECT_FAIL] Login attempt failed for: admin
+2026-02-13 12:55:29 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:55:39 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:55:45 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:55:45 - Account locked; testuser123
+2026-02-13 12:56:50 - [AUTH_PROJECT_FAIL] Login attempt failed for: admin
+2026-02-13 12:58:04 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:58:09 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:58:14 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:58:14 - Account locked; UberYoko0987
+2026-02-15 14:19:23 - [AUTH_PROJECT_LOGIN_SUCCESS] login successful for: testuser123
+2026-02-15 14:19:30 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:14:47 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:14:52 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:14:52 - [AUTH_PROJECT_ACCOUNT_LOCK] Account locked; testuser123
+2026-02-16 10:14:56 - [AUTH_PROJECT_ACCOUNT_LOCKED_ACTIVE] Account locked; testuser123
+2026-02-16 10:31:34 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:31:39 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:31:44 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:31:44 - [AUTH_PROJECT_ACCOUNT_LOCK] Account locked; testuser123

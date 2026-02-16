@@ -12,6 +12,7 @@ LOG_FILE = os.path.join(BASE_DIR, "logs", "pro_auth.log")
 
 WINDOW_SLEEP = 5
 FAILED_THRESHOLD = 5
+threshold_alerted = set()
 
 model = IsolationForest(n_estimators=100, contamination=0.1, random_state=42)
 trained = False
@@ -76,12 +77,14 @@ try:
             )
 
         # ---- Threshold-based alerts ----
+        now = time.time()
+
         for user in users:
             failed = failed_map[user]
             success = success_map[user]
             locked = locked_map[user]
 
-            if failed >= FAILED_THRESHOLD:
+            if failed >= FAILED_THRESHOLD and user not in threshold_alerted:
                 alert = {
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "user": user,
@@ -89,9 +92,11 @@ try:
                     "successful_logins": int(success),
                     "account_locked": int(locked),
                     "severity": calculate_severity(failed, success, locked),
+                    "detection_type": "threshold",
                     "source": "auth-log-monitor",
                 }
                 send_alert(alert)
+                threshold_alerted.add(user)
 
         # ---- ML anomaly detection ----
         if len(X) > 0:
@@ -110,7 +115,8 @@ try:
                             "failed_attempts": int(failed),
                             "successful_logins": int(success),
                             "account_locked": int(locked),
-                            "severity": "ANOMALY",
+                            "severity": "HIGH",
+                            "detection_type": "ml-isolation-forest",
                             "source": "auth-log-monitor",
                         }
                         send_alert(alert)
