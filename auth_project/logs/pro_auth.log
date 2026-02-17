@@ -95,3 +95,5 @@
 2026-02-16 10:31:39 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
 2026-02-16 10:31:44 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
 2026-02-16 10:31:44 - [AUTH_PROJECT_ACCOUNT_LOCK] Account locked; testuser123
+2026-02-16 12:04:42 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: testuser123
+2026-02-17 13:50:07 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: testuser123

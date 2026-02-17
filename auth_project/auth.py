@@ -9,60 +9,13 @@ import time
 import bcrypt
 import pyotp
 import qrcode
+from auth_db import create_user_record, db_connect, get_user, update_user_field
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 LOG_DIR = os.path.join(BASE_DIR, "logs")
 AUTH_LOG = os.path.join(LOG_DIR, "pro_auth.log")
-DB_PATH = os.path.join(BASE_DIR, "users.db")
 
 os.makedirs(LOG_DIR, exist_ok=True)
-
-
-def db_connect():
-    return sqlite3.connect(DB_PATH)
-
-
-def get_user(username):
-    with db_connect() as conn:
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-        SELECT
-
-        id,
-        username,
-        password,
-        failed_attempts,
-        locked,
-        lockout_until,
-        role,
-        mfa_secret
-
-        from users WHERE username = ?
-        """,
-            (username,),
-        )
-
-        user = cursor.fetchone()
-    return dict(user) if user else None
-
-
-def update_user_field(username, field, value):
-    if field not in {
-        "failed_attempts",
-        "locked",
-        "lockout_until",
-        "role",
-        "mfa_secret",
-    }:
-        raise ValueError("Invalid field update")
-    with db_connect() as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            f"UPDATE users SET {field} = ? WHERE username = ?", (value, username)
-        )
 
 
 def log_event(message):
@@ -99,12 +52,8 @@ def enable_mfa(username):
         return
 
     secret = pyotp.random_base32()
-    with db_connect() as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE users SET mfa_secret = ? WHERE username = ?", (secret, username)
-        )
-        conn.commit()
+
+    update_user_field(username, "mfa_secret", secret)
 
     totp = pyotp.TOTP(secret)
 
@@ -150,7 +99,7 @@ def disable_mfa(username):
 
     update_user_field(username, "mfa_secret", None)
     log_event(f"[AUTH_PROJECT_MFA_DISABLE] MFA disabled for user: {username}")
-    print("MFA has been disable.")
+    print("MFA has been disabled.")
 
 
 def format_secret(secret):
@@ -178,6 +127,8 @@ def looks_malicious(input_string):
     test = input_string.upper()
     for pattern in patterns:
         if re.search(pattern, test):
+            return True
+        if not isinstance(input_string, str):
             return True
     return False
 
@@ -274,22 +225,16 @@ def create_user():
 
     peppered = password + PEPPER
     hashed = bcrypt.hashpw(peppered.encode("utf-8"), bcrypt.gensalt())
-    with db_connect() as conn:
-        try:
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO users (username, password) VALUES (?, ?)",
-                (username, hashed),
-            )
-            conn.commit()
-            print("user created successfully!")
-            log_event(f"[AUTH_PROJECT_USER_REGISTER] New user registered: {username}")
-        except sqlite3.IntegrityError:
-            print("Username already exists")
-            log_event(
-                f"[AUTH_PROJECT_USER_REGISTER_FAIL] registration failed for: {username}"
-            )
-            time.sleep(1)
+    try:
+        create_user_record(username, hashed)
+        print("User created successfully!")
+        log_event(f"[AUTH_PROJECT_USER_REGISTER] New user registered: {username}")
+    except sqlite3.IntegrityError:
+        print("Username already exists")
+        log_event(
+            f"[AUTH_PROJECT_USER_REGISTER_FAIL] registration failed for: {username}"
+        )
+        time.sleep(1)
 
 
 def login_user():
@@ -456,6 +401,7 @@ def update_password(username):
                 (newpassword, username),
             )
             conn.commit()
+
             print("Password successfully updated.")
             log_event(
                 f"[AUTH_PROJECT_PASSWORD_CHANGE] Password changed for: {username}"
@@ -534,7 +480,6 @@ def admin_page(username):
         elif choice == "5":
             print("Goodbye!")
             return "exit"
-            break
         else:
             print("Invalid option. try again.")
 
