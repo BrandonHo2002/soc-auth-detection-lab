@@ -1,5 +1,5 @@
 ## Overview
-This project was built to demonstrate core security engineering and SOC monitoring concepts, with a focus on authentication abuse detection, logging, and alerting workflows.
+This project was built to demonstrate core security engineering and SOC monitoring concepts, with a focus on authentication abuse detection, logging, and alerting workflows. The codebase is structured with clear separation between authentication logic, database access, logging, and monitoring to mirror real-world application design.
 
 It includes:
 - Secure user authentication with password hashing and MFA
@@ -44,6 +44,7 @@ Alerts are generated only when thresholds are exceeded, with repeat alerts suppr
 - Secret pepper stored outside the database
 - Input validation and basic injection detection
 - Role-based access (admin vs user)
+- Database writes are restricted through an allow-listed update interface to prevent unsafe field manipulation
 
 ### MFA (Multi-Factor Authentication)
 - TOTP-based MFA using **pyotp**
@@ -76,16 +77,18 @@ Alerts are generated only when thresholds are exceeded, with repeat alerts suppr
 
 ### auth.py
 Handles:
-- User registration
-- Login and MFA verification
-- Password updates
-- Account locking/unlocking
+- User registration and login workflows
+- Password verification and updates
+- MFA enrollment and verification
+- Account locking and unlocking logic
 - Writing structured security logs
+
+Authentication logic is intentionally separated from direct database access to reduce risk and improve maintainability.
 
 Example log events:
 - `[AUTH_PROJECT_FAIL]`
 - `[AUTH_PROJECT_SUCCESS]`
-- `Account locked; username`
+- `[AUTH_PROJECT_ACCOUNT_LOCKED_ACTIVE]`
 
 ---
 
@@ -106,19 +109,29 @@ Responsible for:
 - Printing structured JSON alerts
 - Preventing alert spam
 
+### auth_db.py
+Responsible for all database interactions, providing a clean abstraction layer between authentication logic and persistent storage.
+
+Functions include:
+- Establishing SQLite connections
+- Retrieving user records
+- Updating restricted user fields via allow-listing
+- Creating new user records
+
 ---
 
 ## Project Structure
 
 auth_project/
 │
-├── auth.py # Authentication system
-├── log_summary.py # Log monitoring and alert generation
-├── alert.py # Alert handling and cooldown logic
-├── users.db # SQLite user database
-├── auth_pepper.txt # Secret pepper for password hashing
+├── auth.py           # Authentication logic and security controls
+├── auth_db.py        # Database access layer (SQLite)
+├── log_summary.py    # Log monitoring and alert generation
+├── alert.py          # Alert handling and cooldown logic
+├── users.db          # SQLite user database
+├── auth_pepper.txt   # Server-side pepper for password hashing
 └── logs/
-    └── pro_auth.log # Authentication and security logs
+    └── pro_auth.log  # Authentication and security logs
 
 ## Running the Project
 

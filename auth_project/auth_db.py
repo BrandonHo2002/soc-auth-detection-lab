@@ -63,3 +63,4 @@ def create_user_record(username, password_hash, role="user"):
             (username, password_hash, role),
         )
         conn.commit()
+        return cursor.lastrowid
