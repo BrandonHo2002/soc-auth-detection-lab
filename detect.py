@@ -136,7 +136,7 @@ def detect_impossible_travel(events, window_minutes=60):
         if event["action"] != "login" or event["status"] != "success":
             continue
 
-        user = event["action"]
+        user = event["actor"]
         ts = event["ts"]
         location = event.get("location")
         ip = event.get("ip")
@@ -149,7 +149,7 @@ def detect_impossible_travel(events, window_minutes=60):
             time_diff = ts - prev["ts"]
 
             if (
-                time_diff.total_seconds() <= window_minutes + 60
+                time_diff.total_seconds() <= window_minutes * 60
                 and prev["location"] != location
             ):
                 alerts.append(
@@ -203,9 +203,6 @@ def detect_password_change(events, window_minutes=60):
             prev = last_login[user]
             time_diff = event["ts"] - prev["ts"]
 
-            if prev["location"] == event["location"]:
-                continue
-
             if time_diff.total_seconds() <= window_minutes * 60:
                 alerts.append(
                     {
@@ -222,11 +219,48 @@ def detect_password_change(events, window_minutes=60):
     return alerts
 
 
+def detect_password_change_after_impossible_travel(
+    events, impossible_travel_alerts, window_minutes=60
+):
+    alerts = []
+
+    travel_by_user = {alert["actor"]: alert for alert in impossible_travel_alerts}
+
+    for event in events:
+        if event["action"] == "password_change" and event["status"] == "success":
+            user = event["actor"]
+
+            if user not in travel_by_user:
+                continue
+
+        travel_alert = travel_by_user[user]
+        time_diff = event["ts"] - travel_alert["ts"]
+
+        if time_diff.total_seconds() <= window_minutes * 60:
+            alerts.append(
+                {
+                    "alert_type": "PASSWORD_CHANGE_AFTER_IMPOSSIBLE_TRAVEL",
+                    "actor": user,
+                    "severity": "critical",
+                    "details": {
+                        "time_since_travel_seconds": int(time_diff.total_seconds()),
+                        "from_location": travel_alert.get("from_location"),
+                        "to_location": travel_alert.get("to_location"),
+                    },
+                }
+            )
+    return alerts
+
+
 alerts = []
 alerts.extend(detect_login_failures(events))
 alerts.extend(detect_bruteforce(events))
 alerts.extend(detect_admin_login_outside_business_hours(events))
 alerts.extend(detect_admin_mfa_failure_after_password_success(events))
+impossible_travel_alerts = detect_impossible_travel(events)
+alerts.extend(
+    detect_password_change_after_impossible_travel(events, impossible_travel_alerts)
+)
 
 for alert in alerts:
     print(alert)
