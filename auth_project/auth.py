@@ -72,12 +72,12 @@ def enable_mfa(username):
         uri = totp.provisioning_uri(name=username, issuer_name="AuthProject")
 
         img = qrcode.make(uri)
-        filename = os.path.join(BASE_DIR, f"{username}_mfa_qr.png")
-        img.save(filename)
+        qr_path = os.path.join(BASE_DIR, f"{username}_mfa_qr.png")
+        img.save(f"Saved as {qr_path}")
 
         print("\nMFA enabled using QR code.")
         print("Scan this QR code with google Authenticator:")
-        print(f"Saved as {filename}")
+        print(f"Saved as {qr_path}")
 
     else:
         print("\nMFA enabled using manual secret.")
@@ -144,6 +144,14 @@ def looks_malicious(input_string):
     return False
 
 
+def validate_input(username, password):
+    if not username or not password:
+        return False
+    if looks_malicious(username) or looks_malicious(password):
+        return False
+    return True
+
+
 def validate_username(username):
     if not isinstance(username, str):
         return False
@@ -187,6 +195,16 @@ def validate_password(password):
     return True, None
 
 
+def verify_mfa(secret):
+    code = input("Enter MFA code: ")
+    return pyotp.TOTP(secret).verify(code)
+
+
+def verify_password(stored_hash, password):
+    peppered = f"{password}{PEPPER}"
+    return bcrypt.checkpw(peppered.encode(), stored_hash)
+
+
 def load_pepper():
     try:
         pepper_path = os.path.join(BASE_DIR, "auth_pepper.txt")
@@ -201,7 +219,7 @@ def load_pepper():
     return None
 
 
-PEPPER = load_pepper()
+PEPPER = load_pepper() or ""
 if not PEPPER:
     print("Fatal error: authentication pepper not loaded.")
     sys.exit(1)
@@ -246,6 +264,79 @@ def create_user():
         time.sleep(1)
 
 
+def handle_lockout(username, record):
+    current_time = int(time.time())
+
+    if record["locked"] == 1:
+        if current_time < record["lockout_until"]:
+            cooldown_left = record["lockout_until"] - current_time
+            print(f"Try again in {cooldown_left} seconds.")
+            log_event("ACCOUNT_LOCKED_ACTIVE", username)
+            return False
+        else:
+            update_user_field(username, "locked", 0)
+            update_user_field(username, "failed_attempts", 0)
+            update_user_field(username, "lockout_until", 0)
+
+    return True
+
+def check_password(username, password, record):
+    stored_password = record["password"]
+
+    if isinstance(stored_password, memoryview):
+        stored_password = stored_password.tobytes()
+    elif isinstance(stored_password, str):
+        stored_password = stored_password.encode("utf-8")
+
+    peppered = f"{password}{PEPPER}"
+    password_correct = bcrypt.checkpw(peppered.encode("utf-8"), stored_password)
+
+    if not password_correct:
+        failed_attempts = record["failed_attempts"] + 1
+        update_user_field(username, "failed_attempts", failed_attempts)
+
+        print("Incorrect password")
+        log_event("LOGIN_FAIL", username, details="wrong_password")
+
+        if failed_attempts >= 3:
+            lock_duration = 300
+            new_lockout = int(time.time()) + lock_duration
+            update_user_field(username, "locked", 1)
+            update_user_field(username, "lockout_until", new_lockout)
+
+            print(f"Account locked for {lock_duration} seconds.")
+            log_event("ACCOUNT_LOCK", username)
+
+        return False
+
+    return True
+
+def handle_mfa(username, record):
+    role = record["role"]
+    mfa_secret = record["mfa_secret"]
+
+    if role == "admin" and not mfa_secret:
+        print("Admin must enable MFA")
+        return False
+
+    if not mfa_secret:
+        return True  # no MFA required
+
+    totp = pyotp.TOTP(mfa_secret)
+    code = input("Enter 6-digit MFA code: ").strip()
+
+    if not code.isdigit() or len(code) != 6:
+        print("Invalid MFA format")
+        return False
+
+    if not totp.verify(code, valid_window=1):
+        print("Incorrect MFA code")
+        log_event("MFA_FAIL", username)
+        return False
+
+    print("MFA verified")
+    return True
+
 def login_user():
     try:
         username = input("Enter username: ").strip()
@@ -262,76 +353,14 @@ def login_user():
             log_event(event="LOGIN_FAIL", user=username, details="Unknown user")
             return None, None
 
-        stored_password = record["password"]
-        failed_attempts = record["failed_attempts"]
-        locked = record["locked"]
-        lockout_until = record["lockout_until"]
-        role = record["role"]
-        mfa_secret = record["mfa_secret"]
-
-        if isinstance(stored_password, memoryview):
-            stored_password = stored_password.tobytes()
-        elif isinstance(stored_password, str):
-            stored_password = stored_password.encode("utf-8")
-
-        current_time = int(time.time())
-
-        if locked == 1:
-            if current_time < lockout_until:
-                cooldown_left = lockout_until - current_time
-                print(f"try again in {cooldown_left} seconds.")
-                log_event("ACCOUNT_LOCKED_ACTIVE", username)
-                return None, None
-            else:
-                update_user_field(username, "locked", 0)
-                update_user_field(username, "failed_attempts", 0)
-                update_user_field(username, "lockout_until", 0)
-                failed_attempts = 0
-
-        peppered = password + PEPPER
-        password_correct = bcrypt.checkpw(peppered.encode("utf-8"), stored_password)
-
-        if not password_correct:
-            failed_attempts += 1
-            update_user_field(username, "failed_attempts", failed_attempts)
-            print("Incorrect password")
-            log_event("LOGIN_FAIL", username)
-            if failed_attempts >= 3:
-                lock_duration = 300
-                new_lockout = current_time + lock_duration
-                update_user_field(username, "locked", 1)
-                update_user_field(username, "lockout_until", new_lockout)
-                print(
-                    f"Too many failed attempts. Account locked for: {lock_duration} seconds."
-                )
-                log_event("ACCOUNT_LOCK", username)
+        if not handle_lockout(username, record):
             return None, None
 
-        if role == "admin":
-            if not mfa_secret:
-                print("Admin accounts must enable MFA before login")
-                return None, None
-            totp = pyotp.TOTP(mfa_secret)
-            code = input("Enter your 6-digit MFA code: ").strip()
-            if not code.isdigit() or len(code) != 6:
-                print(f"MFA format error for user: {username}")
-                return None, None
-            if not totp.verify(code, valid_window=1):
-                log_event("MFA_FAIL", username)
-                print("Incorrect MFA code")
-                time.sleep(1)
-                return None, None
-            print("MFA verified")
-        elif mfa_secret:
-            totp = pyotp.TOTP(mfa_secret)
-            code = input("Enter your 6-digit MFA code: ").strip()
+        if not check_password(username, password, record):
+            return None, None
 
-            if totp.verify(code, valid_window=1):
-                print("MFA verified.")
-            else:
-                print("Incorrect MFA code.")
-                log_event("MFA_FAIL", username)
-                return None, None
+        if not handle_mfa(username, record):
+            return None, None
 
         update_user_field(username, "failed_attempts", 0)
         update_user_field(username, "locked", 0)
@@ -339,15 +368,11 @@ def login_user():
 
         log_event("LOGIN_SUCCESS", username)
 
-        if role == "admin":
-            return ("admin", username)
-        else:
-            return ("user", username)
+        return (record["role"], username)
 
     except Exception as e:
         print(f"[DEBUG] login error: {e}")
         raise
-
 
 def update_password(username):
     print("\n===Update Password===")
