@@ -8,7 +8,7 @@ from alert import send_alert
 from sklearn.ensemble import IsolationForest
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(BASE_DIR, "logs", "pro_auth.log")
+LOG_FILE = os.path.join(BASE_DIR, "logs", "auth.log")
 
 WINDOW_SLEEP = 5
 FAILED_THRESHOLD = 5

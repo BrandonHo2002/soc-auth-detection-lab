@@ -2,7 +2,7 @@ import os
 import sqlite3
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "users.db")
+DB_PATH = os.path.join(BASE_DIR, "..", "users.db")
 
 
 def db_connect():
@@ -57,8 +57,16 @@ def create_user_record(username, password_hash, role="user"):
         cursor = conn.cursor()
         cursor.execute(
             """
-            INSERT INTO users (username, password, role)
-            VALUES (?, ?, ?)
+            INSERT INTO users (
+                username,
+                password,
+                role,
+                failed_attempts,
+                locked,
+                lockout_until,
+                mfa_secret
+            )
+            VALUES (?, ?, ?, 0, 0, 0, NULL)
             """,
             (username, password_hash, role),
         )
