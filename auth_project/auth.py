@@ -7,30 +7,55 @@ import re
 import sqlite3
 import sys
 import time
-
 import bcrypt
 import pyotp
 import qrcode
 from auth_db import create_user_record, db_connect, get_user, update_user_field
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_DIR = os.path.join(BASE_DIR, "logs")
-AUTH_LOG = os.path.join(LOG_DIR, "pro_auth.log")
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+LOG_DIR = os.path.join(PROJECT_ROOT, "logs")
+AUTH_LOG = os.path.join(LOG_DIR, "auth.log")
+CONFIG_DIR = os.path.join(PROJECT_ROOT, "config")
+PEPPER_FILE = os.path.join(CONFIG_DIR, "auth_pepper.txt")
 
 os.makedirs(LOG_DIR, exist_ok=True)
 
-
+# Simulated IP for Logging/demo purposes
 def generate_ip():
     return f"192.168.1.{random.randint(1, 255)}"
 
 
 def log_event(event, user, src_ip=None, details=None, status=None):
+    event_map = {
+            "LOGIN_SUCCESS": ("SUCCESS", "LOW", "AUTH_001"),
+            "LOGIN_FAIL": ("FAILURE", "MEDIUM", "AUTH_002"),
+            "ACCOUNT_LOCK": ("WARNING", "HIGH", "AUTH_003"),
+            "MFA_FAIL": ("FAILURE", "HIGH", "AUTH_004"),
+            "MFA_SUCCESS": ("SUCCESS", "LOW", "AUTH_005"),
+            "INPUT_REJECT": ("WARNING", "HIGH", "AUTH_006"),
+            "USER_REGISTER": ("SUCCESS", "LOW", "AUTH_007"),
+            "USER_REGISTER_FAIL": ("FAILURE", "MEDIUM", "AUTH_008"),
+            "PASSWORD_CHANGE": ("SUCCESS", "LOW", "AUTH_009"),
+            "ACCOUNT_UNLOCK": ("SUCCESS", "MEDIUM", "AUTH_010"),
+            "MFA_DISABLE": ("WARNING", "MEDIUM", "AUTH_011"),
+            "MFA_DISABLE_FAIL": ("FAILURE", "HIGH", "AUTH_012"),
+            "ACCOUNT_LOCKED_ACTIVE": ("WARNING", "MEDIUM", "AUTH_013"),
+            "PASSWORD_CHANGE_CANCEL": ("INFO", "LOW", "AUTH_014"),
+    }
+
+    default_status, severity, event_id = event_map.get(
+        event, ("INFO", "LOW", "AUTH_000")
+    )
+
     log = {
         "_time": datetime.datetime.now().isoformat(),
         "event": event,
+        "event_id": event_id,
         "user": user,
         "src_ip": src_ip or generate_ip(),
-        "status": status or "INFO",
+        "status": status or default_status,
+        "severity": severity,
         "details": details or "",
     }
 
@@ -73,7 +98,7 @@ def enable_mfa(username):
 
         img = qrcode.make(uri)
         qr_path = os.path.join(BASE_DIR, f"{username}_mfa_qr.png")
-        img.save(f"Saved as {qr_path}")
+        img.save(qr_path)
 
         print("\nMFA enabled using QR code.")
         print("Scan this QR code with google Authenticator:")
@@ -102,14 +127,16 @@ def disable_mfa(username):
     stored = record["password"]
     if isinstance(stored, memoryview):
         stored = stored.tobytes()
+    elif isinstance(stored, str):
+        stored = stored.encode("utf-8")
 
     if not bcrypt.checkpw(peppered.encode(), stored):
         print("Password incorrect.")
-        log_event("MFA_DISABLE_FAIL", username, status="FAILED")
+        log_event("MFA_DISABLE_FAIL", username, status="FAILURE")
         return
 
     update_user_field(username, "mfa_secret", None)
-    log_event("MFA_DISABLE", username)
+    log_event("MFA_DISABLE", username, status="SUCCESS")
     print("MFA has been disabled.")
 
 
@@ -118,6 +145,9 @@ def format_secret(secret):
 
 
 def looks_malicious(input_string):
+    if not isinstance(input_string, str):
+        return True
+
     patterns = [
         r"'",
         r'"',
@@ -139,8 +169,7 @@ def looks_malicious(input_string):
     for pattern in patterns:
         if re.search(pattern, test):
             return True
-        if not isinstance(input_string, str):
-            return True
+
     return False
 
 
@@ -175,7 +204,7 @@ def validate_password(password):
     if " " in password:
         return False, "Password cannot contain spaces"
     if len(password) not in range(7, 21):
-        return False, "Password must be between 8 to 20 characters long"
+        return False, "Password must be between 7 to 20 characters long"
     if len(set(password)) == 1:
         return False, "Password cannot be made of a single repeating character"
     if not any(c.islower() for c in password):
@@ -195,20 +224,9 @@ def validate_password(password):
     return True, None
 
 
-def verify_mfa(secret):
-    code = input("Enter MFA code: ")
-    return pyotp.TOTP(secret).verify(code)
-
-
-def verify_password(stored_hash, password):
-    peppered = f"{password}{PEPPER}"
-    return bcrypt.checkpw(peppered.encode(), stored_hash)
-
-
 def load_pepper():
     try:
-        pepper_path = os.path.join(BASE_DIR, "auth_pepper.txt")
-        with open(pepper_path, "r") as f:
+        with open(PEPPER_FILE, "r") as f:
             return f.read().strip()
     except FileNotFoundError:
         print("Error: Pepper file missing!")
@@ -219,7 +237,7 @@ def load_pepper():
     return None
 
 
-PEPPER = load_pepper() or ""
+PEPPER = load_pepper()
 if not PEPPER:
     print("Fatal error: authentication pepper not loaded.")
     sys.exit(1)
@@ -280,7 +298,8 @@ def handle_lockout(username, record):
 
     return True
 
-def check_password(username, password, record):
+
+def check_password(username, password, record, src_ip):
     stored_password = record["password"]
 
     if isinstance(stored_password, memoryview):
@@ -296,7 +315,7 @@ def check_password(username, password, record):
         update_user_field(username, "failed_attempts", failed_attempts)
 
         print("Incorrect password")
-        log_event("LOGIN_FAIL", username, details="wrong_password")
+        log_event("LOGIN_FAIL", username, src_ip=src_ip, details=f"wrong_password_attempt_{failed_attempts}", status="FAILURE")
 
         if failed_attempts >= 3:
             lock_duration = 300
@@ -305,13 +324,14 @@ def check_password(username, password, record):
             update_user_field(username, "lockout_until", new_lockout)
 
             print(f"Account locked for {lock_duration} seconds.")
-            log_event("ACCOUNT_LOCK", username)
+            log_event("ACCOUNT_LOCK", username, src_ip=src_ip, details="too_many_attempts", status="WARNING")
 
         return False
 
     return True
 
-def handle_mfa(username, record):
+
+def handle_mfa(username, record, src_ip):
     role = record["role"]
     mfa_secret = record["mfa_secret"]
 
@@ -331,48 +351,59 @@ def handle_mfa(username, record):
 
     if not totp.verify(code, valid_window=1):
         print("Incorrect MFA code")
-        log_event("MFA_FAIL", username)
+        log_event("MFA_FAIL", username, src_ip=src_ip, status="FAILURE")
         return False
 
-    print("MFA verified")
+    print("\nMFA verified")
+    log_event("MFA_SUCCESS", username, src_ip=src_ip, status="SUCCESS")
     return True
+
 
 def login_user():
     try:
         username = input("Enter username: ").strip()
         password = getpass.getpass("Enter password: ")
+        src_ip = generate_ip()
         if looks_malicious(username) or looks_malicious(password):
             print("Invalid input.")
-            log_event("INPUT_REJECT", username, details="malicious_input")
+            log_event("INPUT_REJECT", username, src_ip=src_ip, status="WARNING", details="malicious_input")
             return None, None
 
         record = get_user(username)
 
         if not record:
             print("User not found.")
-            log_event(event="LOGIN_FAIL", user=username, details="Unknown user")
+            log_event(
+                "LOGIN_FAIL",
+                username,
+                src_ip=src_ip,
+                status="FAILURE",
+                details="unknown_user"
+            )
             return None, None
 
         if not handle_lockout(username, record):
             return None, None
 
-        if not check_password(username, password, record):
+        if not check_password(username, password, record, src_ip):
             return None, None
 
-        if not handle_mfa(username, record):
+        if not handle_mfa(username, record, src_ip):
+            log_event("LOGIN_FAIL", username, src_ip=src_ip, status="FAILURE", details="mfa_failed")
             return None, None
 
         update_user_field(username, "failed_attempts", 0)
         update_user_field(username, "locked", 0)
         update_user_field(username, "lockout_until", 0)
 
-        log_event("LOGIN_SUCCESS", username)
+        log_event("LOGIN_SUCCESS", username, src_ip=src_ip, status="SUCCESS")
 
         return (record["role"], username)
 
     except Exception as e:
         print(f"[DEBUG] login error: {e}")
         raise
+
 
 def update_password(username):
     print("\n===Update Password===")
@@ -410,7 +441,7 @@ def update_password(username):
         print(msg)
         return
 
-    confirm = getpass.getpass("Confirm new password")
+    confirm = getpass.getpass("Confirm new password: ")
 
     if newpass != confirm:
         print("Password do not match.")
@@ -429,7 +460,7 @@ def update_password(username):
             conn.commit()
 
             print("Password successfully updated.")
-            log_event("PASSWORD_CHANGE", username)
+            log_event("PASSWORD_CHANGE", username, status="SUCCESS")
     except Exception as e:
         log_event(
             "ERROR",
@@ -446,7 +477,7 @@ def unlock_user():
 
     if looks_malicious(target_user):
         print("Invalid input.")
-        log_event("INPUT_REJECT", target_user, details="malicious_input")
+        log_event("INPUT_REJECT", target_user, details="sql_injection_pattern")
         return
 
     user = get_user(target_user)
@@ -464,7 +495,7 @@ def unlock_user():
     update_user_field(target_user, "lockout_until", 0)
 
     print(f"{target_user}'s account has been unlocked.")
-    log_event("ACCOUNT_UNLOCK", target_user)
+    log_event("ACCOUNT_UNLOCK", target_user, details="unlocked_by_admin", status="SUCCESS")
 
 
 def login_page(username):
