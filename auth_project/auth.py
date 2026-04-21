@@ -278,7 +278,7 @@ def create_user():
         log_event("USER_REGISTER", username, status="SUCCESS")
     except sqlite3.IntegrityError:
         print("Username already exists")
-        log_event("USER_REGISTER_FAIL", username, status="FAILED")
+        log_event("USER_REGISTER_FAIL", username, status="FAILURE")
         time.sleep(1)
 
 
@@ -336,7 +336,7 @@ def handle_mfa(username, record, src_ip):
     mfa_secret = record["mfa_secret"]
 
     if role == "admin" and not mfa_secret:
-        print("Admin must enable MFA")
+        print("Admin must enable MFA before continuing. Use option 4 from main menu.")
         return False
 
     if not mfa_secret:
@@ -504,7 +504,7 @@ def login_page(username):
         print("1. Change Password")
         print("2. Return to Login")
         print("3. Exit")
-        print("4. disable MFA")
+        print("4. Disable MFA")
         choice = input("Enter an option: ")
 
         if choice == "1":
