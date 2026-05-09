@@ -2,18 +2,21 @@ import json
 import time
 
 ALERT_COOLDOWN = 30
-alerted_users = {}
+alerted_alerts = {}
 
 
 def send_alert(alert):
-    user = alert["user"]
+    user = alert.get("user", "unknown")
     now = time.time()
 
-    last = alerted_users.get(user, 0)
+    detection_type = alert.get("detection_type", "unknown")
+    alert_key = (user, detection_type)
+
+    last = alerted_alerts.get(alert_key, 0)
     if now - last < ALERT_COOLDOWN:
         return  # suppress duplicate alerts
 
-    alerted_users[user] = now
+    alerted_alerts[alert_key] = now
 
-    print("\n ALERT ")
+    print("\nALERT ")
     print(json.dumps(alert, indent=2))

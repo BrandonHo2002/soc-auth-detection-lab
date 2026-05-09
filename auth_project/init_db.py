@@ -13,10 +13,10 @@ def main():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
             password BLOB NOT NULL,
-            failed_attempts INTEGER DEFAULT 0,
-            locked INTEGER DEFAULT 0,
-            lockout_until INTEGER DEFAULT 0,
-            role TEXT DEFAULT 'user',
+            failed_attempts INTEGER DEFAULT 0 NOT NULL,
+            locked INTEGER DEFAULT 0 NOT NULL,
+            lockout_until INTEGER DEFAULT 0 NOT NULL,
+            role TEXT DEFAULT 'user' CHECK(role IN('user', 'admin')),
             mfa_secret TEXT
         )
         """)

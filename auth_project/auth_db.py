@@ -2,7 +2,7 @@ import os
 import sqlite3
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "..", "users.db")
+DB_PATH = os.path.join(BASE_DIR, "users.db")
 
 
 def db_connect():
@@ -15,19 +15,18 @@ def get_user(username):
         cursor = conn.cursor()
         cursor.execute(
             """
-        SELECT
+            SELECT
+                id,
+                username,
+                password,
+                failed_attempts,
+                locked,
+                lockout_until,
+                role,
+                mfa_secret
 
-        id,
-        username,
-        password,
-        failed_attempts,
-        locked,
-        lockout_until,
-        role,
-        mfa_secret
-
-        from users WHERE username = ?
-        """,
+            FROM users WHERE username = ?
+            """,
             (username,),
         )
 
@@ -36,20 +35,24 @@ def get_user(username):
 
 
 def update_user_field(username, field, value):
-    if field not in {
+    allowed_fields = {
         "failed_attempts",
         "locked",
         "lockout_until",
         "role",
         "mfa_secret",
-    }:
+    }
+
+    if field not in allowed_fields:
         raise ValueError("Invalid field update")
+
+    query = f"UPDATE users SET {field} = ? WHERE username = ?"
+
     with db_connect() as conn:
         cursor = conn.cursor()
-        cursor.execute(
-            f"UPDATE users SET {field} = ? WHERE username = ?", (value, username)
-        )
+        cursor.execute(query, (value, username))
         conn.commit()
+
 
 
 def create_user_record(username, password_hash, role="user"):
@@ -70,5 +73,4 @@ def create_user_record(username, password_hash, role="user"):
             """,
             (username, password_hash, role),
         )
-        conn.commit()
         return cursor.lastrowid
