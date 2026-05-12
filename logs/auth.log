@@ -1,0 +1,242 @@
+2026-02-03 10:44:06 - New user registered: UberYoko0987
+2026-02-03 12:33:06 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-03 12:33:35 - [AUTH_PROJECT_SUCCESS] user logged in: admin
+2026-02-03 12:45:32 - New user registered: testuser123
+2026-02-03 12:45:42 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:47:55 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:48:20 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:51:10 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:52:15 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-03 12:54:15 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-03 12:56:19 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-04 12:59:41 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-04 12:59:56 - [AUTH_PROJECT_FAIL] MFA failed for: UberYoko0987
+2026-02-06 11:48:41 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 10:36:57 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 11:16:07 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 11:21:39 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 11:21:45 - [SECURITY] MFA disabled for user: testuser123
+2026-02-08 12:30:42 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-08 12:30:50 - [SECURITY] MFA disabled for user: testuser123
+2026-02-08 12:31:10 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-08 12:31:38 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 12:31:44 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 12:31:49 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 13:00:55 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-08 13:01:07 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 13:01:14 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-08 13:01:19 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 10:47:06 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-09 10:47:15 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 10:47:20 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 10:47:24 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:16 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:24 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-09 11:00:31 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:37 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:00:42 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:51:29 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-09 11:51:42 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:51:47 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-09 11:51:53 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:04:26 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-10 10:04:33 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:04:39 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:04:45 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:28:07 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:28:12 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:28:18 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:34:55 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-10 10:36:08 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:36:13 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:36:18 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-10 10:36:25 - Account locked; testuser123
+2026-02-10 12:33:33 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-10 12:34:50 - [AUTH_PROJECT_SUCCESS] user logged in: UberYoko0987
+2026-02-10 12:54:41 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-10 12:54:47 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-10 12:54:53 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-10 12:54:53 - Account locked; UberYoko0987
+2026-02-11 08:43:41 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-12 08:15:16 - [AUTH_PROJECT_SUCCESS] user logged in: testuser123
+2026-02-12 08:15:47 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:15:52 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:15:57 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:15:57 - Account locked; testuser123
+2026-02-12 08:28:03 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:28:08 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:28:14 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-12 08:28:14 - Account locked; testuser123
+2026-02-13 12:45:49 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:45:54 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:45:58 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:45:58 - Account locked; testuser123
+2026-02-13 12:46:09 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:46:16 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:46:23 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:46:23 - Account locked; UberYoko0987
+2026-02-13 12:47:38 - [AUTH_PROJECT_FAIL] Login attempt failed for: admin
+2026-02-13 12:55:29 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:55:39 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:55:45 - [AUTH_PROJECT_FAIL] Login attempt failed for: testuser123
+2026-02-13 12:55:45 - Account locked; testuser123
+2026-02-13 12:56:50 - [AUTH_PROJECT_FAIL] Login attempt failed for: admin
+2026-02-13 12:58:04 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:58:09 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:58:14 - [AUTH_PROJECT_FAIL] Login attempt failed for: UberYoko0987
+2026-02-13 12:58:14 - Account locked; UberYoko0987
+2026-02-15 14:19:23 - [AUTH_PROJECT_LOGIN_SUCCESS] login successful for: testuser123
+2026-02-15 14:19:30 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:14:47 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:14:52 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:14:52 - [AUTH_PROJECT_ACCOUNT_LOCK] Account locked; testuser123
+2026-02-16 10:14:56 - [AUTH_PROJECT_ACCOUNT_LOCKED_ACTIVE] Account locked; testuser123
+2026-02-16 10:31:34 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:31:39 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:31:44 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-02-16 10:31:44 - [AUTH_PROJECT_ACCOUNT_LOCK] Account locked; testuser123
+2026-02-16 12:04:42 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: testuser123
+2026-02-17 13:50:07 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: testuser123
+2026-03-10 10:31:40 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: testuser123
+2026-03-10 10:32:22 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-03-10 10:33:51 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: UberYoko0987
+2026-03-10 10:40:29 - [AUTH_PROJECT_LOGIN_FAIL] Login failed for: testuser123
+2026-03-10 12:05:03 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: testuser123
+2026-03-10 12:06:13 - [AUTH_PROJECT_LOGIN_SUCCESS] Login successful for: testuser123
+{"_time": "2026-03-30T12:51:45.042845", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.103", "status": "INFO", "details": ""}
+{"_time": "2026-03-30T12:56:26.922338", "event": "USER_REGISTER", "user": "usertest123", "src_ip": "192.168.1.252", "status": "SUCCESS", "details": ""}
+{"_time": "2026-03-30T13:05:18.887011", "event": "USER_REGISTER", "user": "usertest098", "src_ip": "192.168.1.191", "status": "SUCCESS", "details": ""}
+{"_time": "2026-03-30T13:06:17.786807", "event": "LOGIN_SUCCESS", "user": "usertest098", "src_ip": "192.168.1.213", "status": "INFO", "details": ""}
+{"_time": "2026-03-30T13:06:28.847595", "event": "MFA_DISABLE", "user": "usertest098", "src_ip": "192.168.1.63", "status": "INFO", "details": ""}
+{"_time": "2026-03-30T13:07:00.695528", "event": "LOGIN_FAIL", "user": "usertest098", "src_ip": "192.168.1.152", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-30T13:07:17.110575", "event": "LOGIN_SUCCESS", "user": "usertest098", "src_ip": "192.168.1.161", "status": "INFO", "details": ""}
+{"_time": "2026-03-30T13:08:33.874143", "event": "LOGIN_FAIL", "user": "usertest098", "src_ip": "192.168.1.27", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-30T13:08:42.963805", "event": "LOGIN_FAIL", "user": "usertest098", "src_ip": "192.168.1.186", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-30T13:08:51.208542", "event": "LOGIN_FAIL", "user": "usertest098", "src_ip": "192.168.1.31", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-30T13:08:51.235036", "event": "ACCOUNT_LOCK", "user": "usertest098", "src_ip": "192.168.1.140", "status": "INFO", "details": ""}
+{"_time": "2026-03-30T13:09:51.274138", "event": "LOGIN_FAIL", "user": "usertest123", "src_ip": "192.168.1.123", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-30T13:13:01.487773", "event": "MFA_FAIL", "user": "usertest123", "src_ip": "192.168.1.185", "status": "INFO", "details": ""}
+{"_time": "2026-03-30T13:13:29.507973", "event": "LOGIN_FAIL", "user": "WHERE", "src_ip": "192.168.1.251", "status": "INFO", "details": "Unknown user"}
+{"_time": "2026-03-30T13:14:05.024527", "event": "INPUT_REJECT", "user": "INSERT", "src_ip": "192.168.1.204", "status": "INFO", "details": "malicious_input"}
+{"_time": "2026-03-30T13:18:40.032855", "event": "MFA_FAIL", "user": "usertest123", "src_ip": "192.168.1.163", "status": "INFO", "details": ""}
+{"_time": "2026-03-30T13:19:08.217509", "event": "LOGIN_FAIL", "user": "2", "src_ip": "192.168.1.205", "status": "INFO", "details": "Unknown user"}
+{"_time": "2026-03-30T13:19:23.352596", "event": "LOGIN_SUCCESS", "user": "usertest123", "src_ip": "192.168.1.126", "status": "INFO", "details": ""}
+{"_time": "2026-03-31T10:18:17.784559", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.241", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-31T10:18:23.569164", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.80", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-31T10:18:29.493821", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.75", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-03-31T10:18:29.515510", "event": "ACCOUNT_LOCK", "user": "testuser123", "src_ip": "192.168.1.180", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T09:57:59.848248", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.209", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-11T09:58:26.974401", "event": "MFA_FAIL", "user": "usertest123", "src_ip": "192.168.1.176", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T09:58:26.974401", "event": "LOGIN_FAIL", "user": "usertest123", "src_ip": "192.168.1.206", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T09:58:51.937107", "event": "MFA_FAIL", "user": "usertest123", "src_ip": "192.168.1.60", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T09:58:51.937107", "event": "LOGIN_FAIL", "user": "usertest123", "src_ip": "192.168.1.215", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T09:59:33.996251", "event": "MFA_FAIL", "user": "usertest123", "src_ip": "192.168.1.150", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T09:59:33.996251", "event": "LOGIN_FAIL", "user": "usertest123", "src_ip": "192.168.1.242", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T09:59:56.228881", "event": "MFA_FAIL", "user": "usertest098", "src_ip": "192.168.1.212", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T09:59:56.228881", "event": "LOGIN_FAIL", "user": "usertest098", "src_ip": "192.168.1.169", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T10:00:42.787321", "event": "MFA_FAIL", "user": "usertest098", "src_ip": "192.168.1.183", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T10:00:42.787321", "event": "LOGIN_FAIL", "user": "usertest098", "src_ip": "192.168.1.124", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T10:02:24.415681", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.229", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-11T10:02:52.328618", "event": "LOGIN_FAIL", "user": "admin", "src_ip": "192.168.1.29", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-11T10:02:52.352456", "event": "ACCOUNT_LOCK", "user": "admin", "src_ip": "192.168.1.29", "status": "WARNING", "details": "too_many_failed_attempts"}
+{"_time": "2026-04-11T10:03:28.420932", "event": "MFA_FAIL", "user": "usertest123", "src_ip": "192.168.1.171", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T10:03:28.420932", "event": "LOGIN_FAIL", "user": "usertest123", "src_ip": "192.168.1.91", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T10:14:39.579879", "event": "LOGIN_FAIL", "user": "admin", "src_ip": "192.168.1.101", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-11T10:14:39.595929", "event": "ACCOUNT_LOCK", "user": "admin", "src_ip": "192.168.1.101", "status": "WARNING", "details": "too_many_failed_attempts"}
+{"_time": "2026-04-11T10:14:48.772746", "event": "LOGIN_FAIL", "user": "UberYoko0987", "src_ip": "192.168.1.51", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-11T10:25:21.764615", "event": "USER_REGISTER", "user": "boostedgold2022", "src_ip": "192.168.1.222", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-11T10:26:14.294543", "event": "MFA_FAIL", "user": "boostedgold2022", "src_ip": "192.168.1.214", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T10:26:14.302962", "event": "LOGIN_FAIL", "user": "boostedgold2022", "src_ip": "192.168.1.26", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T10:26:36.828164", "event": "MFA_FAIL", "user": "boostedgold2022", "src_ip": "192.168.1.36", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T10:26:36.828164", "event": "LOGIN_FAIL", "user": "boostedgold2022", "src_ip": "192.168.1.40", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T10:42:11.895107", "event": "MFA_FAIL", "user": "boostedgold2022", "src_ip": "192.168.1.80", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T10:42:11.895107", "event": "LOGIN_FAIL", "user": "boostedgold2022", "src_ip": "192.168.1.198", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-11T10:42:03.865339", "event": "MFA_SUCCESS", "user": "boostedgold2022", "src_ip": "192.168.1.212", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T10:42:03.874102", "event": "LOGIN_SUCCESS", "user": "boostedgold2022", "src_ip": "192.168.1.71", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-11T10:42:46.102117", "event": "LOGIN_FAIL", "user": "d", "src_ip": "192.168.1.181", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-11T10:47:42.656115", "event": "LOGIN_FAIL", "user": "d", "src_ip": "192.168.1.59", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-11T10:59:51.678797", "event": "LOGIN_FAIL", "user": "admin", "src_ip": "192.168.1.249", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-11T10:59:51.711011", "event": "ACCOUNT_LOCK", "user": "admin", "src_ip": "192.168.1.249", "status": "WARNING", "details": "too_many_failed_attempts"}
+{"_time": "2026-04-11T11:02:20.024522", "event": "ACCOUNT_LOCKED_ACTIVE", "user": "admin", "src_ip": "192.168.1.232", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T11:16:37.211308", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.74", "status": "INFO", "details": ""}
+{"_time": "2026-04-11T11:16:37.219432", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.195", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-11T11:17:13.571753", "event": "LOGIN_FAIL", "user": "admin", "src_ip": "192.168.1.240", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-12T12:15:40.512161", "event": "LOGIN_FAIL", "user": "admin", "src_ip": "192.168.1.89", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-12T12:33:41.720164", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.70", "status": "INFO", "details": ""}
+{"_time": "2026-04-12T12:33:41.732742", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.199", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-12T12:42:56.459208", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.21", "status": "INFO", "details": ""}
+{"_time": "2026-04-12T12:42:56.464253", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.17", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-12T12:44:58.416942", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.195", "status": "INFO", "details": ""}
+{"_time": "2026-04-12T12:44:58.433507", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.2", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-12T12:57:24.500755", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.18", "status": "INFO", "details": ""}
+{"_time": "2026-04-12T12:57:24.508454", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.135", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-13T08:53:02.131238", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.213", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-13T08:53:20.153937", "event": "USER_REGISTER", "user": "testuser123", "src_ip": "192.168.1.130", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-13T08:55:10.130581", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.176", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-13T09:15:11.526735", "event": "INPUT_REJECT", "user": "insert", "src_ip": "192.168.1.75", "status": "WARNING", "details": "malicious_input"}
+{"_time": "2026-04-13T09:15:34.507744", "event": "LOGIN_FAIL", "user": "t", "src_ip": "192.168.1.142", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-13T09:15:39.096254", "event": "LOGIN_FAIL", "user": "t", "src_ip": "192.168.1.68", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-13T09:15:42.854183", "event": "LOGIN_FAIL", "user": "ff", "src_ip": "192.168.1.191", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-13T09:15:47.739591", "event": "LOGIN_FAIL", "user": "ddd", "src_ip": "192.168.1.226", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-13T09:16:05.191718", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.19", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-13T09:16:10.355918", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.101", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-13T09:16:15.633377", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.188", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-13T09:16:15.662803", "event": "ACCOUNT_LOCK", "user": "testuser123", "src_ip": "192.168.1.188", "status": "WARNING", "details": "too_many_failed_attempts"}
+{"_time": "2026-04-13T09:16:52.079789", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.13", "status": "INFO", "details": ""}
+{"_time": "2026-04-13T09:16:52.088766", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.112", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-13T09:17:00.909568", "event": "ACCOUNT_UNLOCK", "user": "testuser123", "src_ip": "192.168.1.38", "status": "INFO", "details": ""}
+{"_time": "2026-04-13T09:17:23.758337", "event": "PASSWORD_CHANGE_CANCEL", "user": "admin", "src_ip": "192.168.1.135", "status": "INFO", "details": ""}
+{"_time": "2026-04-13T09:17:47.791419", "event": "PASSWORD_CHANGE", "user": "admin", "src_ip": "192.168.1.65", "status": "INFO", "details": ""}
+{"_time": "2026-04-13T09:18:44.683057", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.190", "status": "INFO", "details": ""}
+{"_time": "2026-04-13T09:18:44.692371", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.237", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-13T09:19:18.470654", "event": "PASSWORD_CHANGE", "user": "admin", "src_ip": "192.168.1.112", "status": "INFO", "details": ""}
+{"_time": "2026-04-13T09:19:42.970473", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.142", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-13T09:19:54.221493", "event": "MFA_DISABLE", "user": "testuser123", "src_ip": "192.168.1.70", "status": "INFO", "details": ""}
+{"_time": "2026-04-13T09:20:07.802988", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.246", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-14T08:38:03.286892", "event": "LOGIN_FAIL", "user": "admin@123", "src_ip": "192.168.1.98", "status": "FAILED", "details": "unknown user"}
+{"_time": "2026-04-14T08:38:17.450104", "event": "MFA_FAIL", "user": "admin", "src_ip": "192.168.1.73", "status": "INFO", "details": ""}
+{"_time": "2026-04-14T08:38:17.450104", "event": "LOGIN_FAIL", "user": "admin", "src_ip": "192.168.1.84", "status": "FAILED", "details": "mfa_failed"}
+{"_time": "2026-04-14T08:39:07.879208", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.38", "status": "INFO", "details": ""}
+{"_time": "2026-04-14T08:39:07.899502", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.115", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-14T08:39:32.455676", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.166", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T08:39:37.667527", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.222", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T08:39:43.200090", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.217", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T08:39:43.229036", "event": "ACCOUNT_LOCK", "user": "testuser123", "src_ip": "192.168.1.217", "status": "WARNING", "details": "too_many_failed_attempts"}
+{"_time": "2026-04-14T08:40:37.624750", "event": "MFA_SUCCESS", "user": "admin", "src_ip": "192.168.1.237", "status": "INFO", "details": ""}
+{"_time": "2026-04-14T08:40:37.635812", "event": "LOGIN_SUCCESS", "user": "admin", "src_ip": "192.168.1.230", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-14T08:40:44.438656", "event": "ACCOUNT_UNLOCK", "user": "testuser123", "src_ip": "192.168.1.200", "status": "INFO", "details": ""}
+{"_time": "2026-04-14T08:40:53.168932", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.131", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T08:41:06.695952", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.52", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-14T09:02:04.332499", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.48", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T09:02:26.047293", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.246", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T09:02:33.679211", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.255", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-14T09:17:23.339560", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.180", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T09:17:28.746470", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.167", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T09:17:35.734194", "event": "LOGIN_SUCCESS", "user": "testuser123", "src_ip": "192.168.1.187", "status": "SUCCESS", "details": ""}
+{"_time": "2026-04-14T09:17:49.659707", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.66", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T09:17:55.407623", "event": "LOGIN_FAIL", "user": "testuser123", "src_ip": "192.168.1.165", "status": "INFO", "details": "wrong_password"}
+{"_time": "2026-04-14T12:53:13.480938", "event": "LOGIN_FAIL", "event_id": "AUTH_002", "user": "testuser123", "src_ip": "192.168.1.179", "status": "FAILURE", "severity": "MEDIUM", "details": "wrong_password_attempt_3"}
+{"_time": "2026-04-14T12:53:13.509305", "event": "ACCOUNT_LOCK", "event_id": "AUTH_003", "user": "testuser123", "src_ip": "192.168.1.179", "status": "WARNING", "severity": "HIGH", "details": "too_many_attempts"}
+{"_time": "2026-04-14T12:53:47.296319", "event": "MFA_SUCCESS", "event_id": "AUTH_005", "user": "admin", "src_ip": "192.168.1.192", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-04-14T12:53:47.304179", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "admin", "src_ip": "192.168.1.192", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-04-14T12:53:52.928576", "event": "ACCOUNT_UNLOCK", "event_id": "AUTH_010", "user": "testuser123", "src_ip": "192.168.1.2", "status": "SUCCESS", "severity": "MEDIUM", "details": "unlocked_by_admin"}
+{"_time": "2026-04-14T12:54:04.797733", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "testuser123", "src_ip": "192.168.1.146", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-04-18T13:07:28.967856", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "testuser123", "src_ip": "192.168.1.28", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-04-21T09:45:05.585056", "event": "INPUT_REJECT", "event_id": "AUTH_006", "user": "INSERT", "src_ip": "192.168.1.251", "status": "WARNING", "severity": "HIGH", "details": "malicious_input"}
+{"_time": "2026-04-21T09:52:19.467365", "event": "MFA_FAIL", "event_id": "AUTH_004", "user": "admin", "src_ip": "192.168.1.199", "status": "FAILURE", "severity": "HIGH", "details": ""}
+{"_time": "2026-04-21T09:52:19.469364", "event": "LOGIN_FAIL", "event_id": "AUTH_002", "user": "admin", "src_ip": "192.168.1.199", "status": "FAILURE", "severity": "MEDIUM", "details": "mfa_failed"}
+{"_time": "2026-05-08T10:25:19.825358", "event": "ERROR", "event_id": "AUTH_999", "user": "testuser123", "src_ip": "16.188.236.88", "status": "FAILURE", "severity": "HIGH", "details": "no such table: users"}
+{"_time": "2026-05-08T10:42:06.913022", "event": "USER_REGISTER", "event_id": "AUTH_007", "user": "admin", "src_ip": "192.168.1.151", "status": "SUCCESS", "severity": "LOW", "details": "admin_created"}
+{"_time": "2026-05-08T10:44:10.161868", "event": "MFA_FAIL", "event_id": "AUTH_004", "user": "admin", "src_ip": "79.189.48.218", "status": "FAILURE", "severity": "HIGH", "details": "invalid_mfa_code"}
+{"_time": "2026-05-08T10:44:10.161868", "event": "LOGIN_FAIL", "event_id": "AUTH_002", "user": "admin", "src_ip": "79.189.48.218", "status": "FAILURE", "severity": "MEDIUM", "details": "mfa_failed"}
+{"_time": "2026-05-08T10:43:56.820715", "event": "MFA_SUCCESS", "event_id": "AUTH_005", "user": "admin", "src_ip": "131.212.175.120", "status": "SUCCESS", "severity": "LOW", "details": "mfa_verified"}
+{"_time": "2026-05-08T10:43:56.836804", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "admin", "src_ip": "131.212.175.120", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-05-08T11:38:28.243798", "event": "USER_REGISTER", "event_id": "AUTH_007", "user": "testuser123", "src_ip": "61.129.35.36", "status": "SUCCESS", "severity": "LOW", "details": "new_user_created"}
+{"_time": "2026-05-08T11:38:35.630951", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "testuser123", "src_ip": "192.168.1.13", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-05-08T11:39:15.800055", "event": "MFA_SUCCESS", "event_id": "AUTH_005", "user": "testuser123", "src_ip": "192.168.1.158", "status": "SUCCESS", "severity": "LOW", "details": "mfa_verified"}
+{"_time": "2026-05-08T11:39:15.809196", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "testuser123", "src_ip": "192.168.1.158", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-05-08T11:39:33.411215", "event": "MFA_SUCCESS", "event_id": "AUTH_005", "user": "admin", "src_ip": "28.223.131.7", "status": "SUCCESS", "severity": "LOW", "details": "mfa_verified"}
+{"_time": "2026-05-08T11:39:33.423992", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "admin", "src_ip": "28.223.131.7", "status": "SUCCESS", "severity": "LOW", "details": ""}
+{"_time": "2026-05-08T11:40:04.017312", "event": "MFA_RESET_FAIL", "event_id": "AUTH_000", "user": "testuser123", "src_ip": "192.168.1.94", "status": "INFO", "severity": "LOW", "details": "wrong_admin_password"}
+{"_time": "2026-05-08T11:40:20.775959", "event": "MFA_RESET", "event_id": "AUTH_000", "user": "testuser123", "src_ip": "169.185.177.84", "status": "INFO", "severity": "LOW", "details": "mfa_reset_after_password_confirmation"}
+{"_time": "2026-05-12T12:22:14.663355", "event": "LOGIN_SUCCESS", "event_id": "AUTH_001", "user": "testuser123", "src_ip": "192.168.1.54", "status": "SUCCESS", "severity": "LOW", "details": ""}
