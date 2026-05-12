@@ -64,11 +64,13 @@ Before running the system for the first time, initialize the database:
 python auth_project/init_db.py
 ```
 
-(Optional) Create an admin account if needed:
+(Optional but recommended) Create an admin account:
 
 ```bash
 python auth_project/create_admin.py
 ```
+
+Admin accounts are required to configure MFA on first login using a TOTP authenticator application (e.g., Google Authenticator).
 
 Run the authentication system to start generating security events:
 

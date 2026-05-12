@@ -50,6 +50,8 @@ Follow these steps to run the project locally:
    ```
    This script creates the initial admin user used to manage other accounts.
 
+   Admin accounts are required to configure MFA on first login using a TOTP authenticator application such as Google Authenticator.
+
 3. Run the authentication system:
    ```bash
    python auth_project/auth.py
