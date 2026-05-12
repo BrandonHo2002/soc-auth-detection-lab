@@ -133,7 +133,7 @@ try:
                 send_alert(alert)
                 mfa_alerted.add(user)
 
-        # ---- ML anomaly detection ----
+        # ---- Experimental ML-based anomaly detection using Isolation Forest for learning purposes ----
         if len(X) > 0 and len(users) > 0:
             if not trained:
                 model.fit(X)
@@ -143,7 +143,7 @@ try:
                 preds = model.predict(X)
                 for user, pred, vec in zip(users, preds, X):
                     if pred == -1:
-                        failed, success, locked, mfa_fail = vec
+                        failed, success, locked = vec
                         alert = {
                             "timestamp": datetime.now(timezone.utc).isoformat(),
                             "user": user,

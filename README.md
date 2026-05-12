@@ -1,12 +1,39 @@
 ## Overview
 
-This project simulates a secure authentication system designed to monitor and detect suspicious login activity, particularly focusing on detecting potentially compromised accounts.
+This project implements a secure authentication system designed to monitor login activity and identify signs of potentially compromised accounts.
 
-Detection is implemented using Splunk as the primary SIEM tool, with custom Python scripts included for learning purposes. It includes features such as structured logging, multi-factor authentication (MFA), account lockouts, and detection of abnormal behaviours.
+Detection and monitoring are primarily implemented in Splunk, while supplemental Python scripts demonstrate local detection logic and event correlation techniques. It includes features such as centralized structured JSON logging, multi-factor authentication (MFA), account lockouts, and detection of abnormal behaviours such as repeated login failures, MFA misuse, and suspicious input activity.
 
-It simulates a Security Operations Center (SOC) workflow, where authentication logs are generated, ingested into a SIEM, and analyzed to detect potential security threats.
+It simulates a Security Operations Center (SOC) workflow by generating authentication logs, ingesting them into a SIEM for analysis, and applying detection logic to identify suspicious activity.
 
-The project demonstrates an end-to-end detection pipeline, from log generation to SIEM-based monitoring and investigation.
+The project demonstrates an end-to-end SOC-style detection pipeline, from authentication event generation to SIEM-based monitoring, correlation, and investigation.
+
+## Additional Documentation
+
+Detailed technical implementation notes and detection documentation are available in:
+
+- `AUTH_SYSTEM.md`
+
+## Skills Demonstrated
+
+This project demonstrates practical skills relevant to an entry-level Security Analyst role, including:
+
+* Log analysis
+* Detection engineering
+* SIEM (Splunk) usage
+* Authentication security best practices
+* Building and visualizing security detections in a SIEM dashboard
+* Understanding SOC workflows and security event investigation processes
+
+## Technologies Used
+
+* Python
+* Splunk Enterprise
+* SQLite
+* bcrypt
+* pyotp (TOTP MFA)
+* qrcode
+* scikit-learn (experimental anomaly detection concepts)
 
 ## Getting Started
 
@@ -21,7 +48,7 @@ Follow these steps to run the project locally:
    ```bash 
    python auth_project/create_admin.py
    ```
-   This script creates an initial admin user required to manage other accounts.
+   This script creates the initial admin user used to manage other accounts.
 
 3. Run the authentication system:
    ```bash
@@ -31,15 +58,31 @@ Follow these steps to run the project locally:
    ```
    logs/auth.log
    ```
+
    Interact with the system (e.g., login attempts, failed logins, MFA actions) to generate authentication events.
 
-   These logs can then be ingested into Splunk for monitoring and detection.
+   These logs can then be ingested into Splunk for monitoring and analysis.
+
+4. (Optional) Run the local detection monitor:
+   ```bash
+   python auth_project/log_summary.py
+   ```
+
+   This script continuously monitors authentication logs and generates local alerts for suspicious behaviour.
+
+   For simplicity, the local monitoring script performs repeated analysis of the authentication log file rather than incremental log streaming.
 
 ## Setup Notes
 
-Create a `config/auth_pepper.txt` file and add a secret value used for password hashing.
+Create a `config/auth_pepper.txt` file containing a secret value used for password hashing.
 
-This file is required for the authentication system to run.
+You can copy or rename `auth_pepper.txt.example` to:
+
+`config/auth_pepper.txt`
+
+The application expects the file to be named exactly:
+
+`config/auth_pepper.txt`
 
 Example:
 
@@ -47,27 +90,28 @@ mysecretpepper123
 
 ## Threat Model
 
-The system is designed to detect threats related to compromised user and admin accounts by monitoring authentication activity. This includes:
+The system is designed to simulate detection of suspicious authentication activity and potentially compromised accounts through authentication monitoring. This includes:
 
-* Multiple failed login attempts (brute-force attacks)
-* Failed login attempts followed by a successful login
-* MFA verification failures
-* Account lockouts due to repeated failures
-* Suspicious login patterns
+* Brute-force attempts (multiple failed login attempts)
+* Suspicious login patterns (failed attempts followed by success)
+* MFA misuse or bypass attempts
+* Unauthorized configuration changes (e.g., MFA disable attempts)
+* Access attempts during account lockout periods
+* Simulated IP-based detections are simplified and do not use real geolocation data
 
 ## Detection Approach
 
 ### Local Detection (Python)
 
-Custom scripts are included for learning purposes to demonstrate how detection logic works, including threshold-based alerting, event correlation, and basic anomaly detection.
+Custom scripts demonstrate threshold-based alerting, event correlation, and basic anomaly detection concepts using authentication log data.
 
 * **log_summary.py**  
-  Monitors authentication logs in real time, performs threshold-based detection, and applies basic anomaly detection using Isolation Forest.
+  Monitors authentication logs continuously, performs threshold-based detection, and demonstrates basic anomaly detection concepts using Isolation Forest for learning purposes.
 
 * **alert.py**  
-  Generates alerts when suspicious behavior is detected and includes alert suppression logic to prevent duplicate alerts within a short time window.
+  Generates alerts when suspicious behaviour is detected and includes alert suppression logic to prevent duplicate alerts within a short time window.
 
-These scripts demonstrate how detection logic can be implemented behind the scenes and were later supplemented by Splunk, which is used as the primary detection and monitoring tool to better reflect real-world SOC workflows.
+These scripts demonstrate how detection logic can be implemented locally, while Splunk serves as the primary detection and monitoring platform.
 
 ### Splunk Detection (Primary)
 
@@ -76,29 +120,40 @@ Detection logic is primarily implemented in Splunk using SPL queries, including:
 * Multiple failed login attempts
 * Failed attempts followed by successful login
 * Account lockouts
+* MFA failures and MFA brute-force activity
+* MFA disable events followed by successful logins
+* Suspicious input events (INPUT_REJECT)
+* Correlated behaviours such as repeated access attempts during lockout
 
-Splunk is used as the primary detection and monitoring tool, reflecting real-world SOC environments.
+Logs were ingested into Splunk Enterprise (trial environment) to simulate SIEM-based detection and monitoring, reflecting real-world SOC environments.
 
 These detections are visualized in the Splunk dashboard for real-time monitoring.
 
 ## How It Works
 
 * `init_db.py` is used to initialize the database before running the system
-* `auth.py` generates structured authentication logs
+* `logger.py` acts as the centralized logging module, generating structured JSON authentication events with event IDs, severity levels, and simulated source IPs
+* `auth.py` handles authentication, MFA, account lockouts, and user management
 * Logs are stored in `logs/auth.log`
 * Logs can be:
 
   * analyzed locally using Python scripts
-  * ingested into Splunk for real-time detection and alerting
+  * ingested into Splunk for detection and alerting
 
 The authentication system (`auth.py`) includes:
 
 * Secure password hashing using bcrypt with a pepper
-* Account lockout after multiple failed login attempts
-* Multi-Factor Authentication (MFA) using TOTP (PyOTP)
+* Account lockout after multiple failed login attempts (3 attempts → 5-minute lockout)
+* Role-based Multi-Factor Authentication (MFA):
+  * Admin accounts are required to configure MFA on first login
+  * Regular users can optionally enable or disable MFA
+  * MFA verification is enforced if enabled
+  * For simulation purposes only, MFA setup displays QR codes and secret keys to emulate onboarding flows.
+  * In production systems, secrets would only be shown once and never re-displayed.
+
 * Role-based access control (admin vs user)
-* Input validation and basic injection detection
-* Structured JSON logging for all authentication events
+* Basic suspicious input detection and logging
+* Structured JSON logging with event IDs, severity levels, and source IPs (designed for SIEM ingestion)
 
 ## Log Format Example
 
@@ -117,15 +172,17 @@ The authentication system (`auth.py`) includes:
 
 ## Splunk Setup
 
-Splunk was configured to monitor the authentication log file (`logs/auth.log`) as a data input.
+Logs are structured in JSON format to simulate real-world SIEM ingestion pipelines and enable efficient field extraction within Splunk.
 
-A custom index was created to store authentication events, and SPL queries were used to analyze login activity and detect suspicious behavior.
+Authentication logs were ingested into Splunk Enterprise (trial environment) using a file-based data input.
+
+A custom index was created to store authentication events, and SPL queries were used to analyze login activity and detect suspicious behaviour.
 
 ## Splunk Dashboard
 
-A Splunk dashboard was created to monitor authentication activity and detect suspicious behavior in real time.
+A Splunk dashboard was created to monitor authentication activity and detect suspicious behaviour in real time.
 
-The dashboard includes panels for:
+The dashboard includes visualizations for:
 
 * Failed login attempts over time
 * Successful logins after multiple failures
@@ -136,11 +193,9 @@ The dashboard includes panels for:
 * Suspicious input detection
 * MFA activity monitoring
 
-These visualizations simulate how a SOC analyst would monitor and investigate authentication-related threats.
+These visualizations simulate how a SOC analyst monitors authentication activity, identifies anomalies, and investigates potential account compromise scenarios.
 
-The dashboard provides a quick way to identify suspicious patterns without manually running queries.
-
-## Dashboard Screenshots
+## Example Dashboard Screenshots
 
 ![Dashboard Overview](screenshots/dashboard_overview.png)
 ![Suspicious Logins](screenshots/suspicious_logins.png)
@@ -150,37 +205,37 @@ The dashboard provides a quick way to identify suspicious patterns without manua
 ## Project Structure
 
 ```
-project_root/
+soc-auth-detection-lab/
 ├── auth_project/
 │   ├── auth.py
 │   ├── auth_db.py
+│   ├── logger.py
+│   ├── create_admin.py
 │   ├── init_db.py
 │   ├── log_summary.py
-│   ├── alert.py
-│   └── ...
+│   ├── users.db  # generated at runtime
+│   └── alert.py
+├── generated_qr/  # generated at runtime (not stored in repository)
 ├── config/
-│   └── auth_pepper.txt
+│   └── auth_pepper.txt.example
 ├── logs/
-│   └── auth.log
-├── requirements.txt
-└── README.md
+│   └── auth.log  # generated at runtime
+├── screenshots/
+│   ├── dashboard_overview.png
+│   ├── suspicious_logins.png
+│   └── event_breakdown.png
+├── .gitignore
+├── AUTH_SYSTEM.md
+├── README.md
+└── requirements.txt
 ```
 
 ## Limitations and Future Improvements
 
+This project is designed for educational purposes and does not represent a production-grade authentication or detection system.
+
 * Detection is currently focused only on authentication events
 * Detection rules use simple thresholds and can be improved with more advanced logic
-* Data is simulated and does not represent real attacker behavior
+* Data is simulated and does not represent real attacker behaviour
 * No automated alerting system (e.g., notifications or integrations)
 * Geographic-based detection (e.g., impossible travel) is simplified and can be improved with real IP data
-
-## Goal
-
-This project is designed to demonstrate practical skills relevant to an entry-level Security Analyst role, including:
-
-* Log analysis
-* Detection engineering
-* SIEM (Splunk) usage
-* Authentication security best practices
-* Building and visualizing security detections in a SIEM dashboard
-* Understanding SOC workflows and security event investigation processes

@@ -34,6 +34,8 @@ def log_event(event, user, src_ip=None, details=None, status=None):
             "MFA_DISABLE_FAIL": ("FAILURE", "HIGH", "AUTH_012"),
             "ACCOUNT_LOCKED_ACTIVE": ("WARNING", "MEDIUM", "AUTH_013"),
             "PASSWORD_CHANGE_CANCEL": ("INFO", "LOW", "AUTH_014"),
+            "MFA_RESET": ("WARNING", "MEDIUM", "AUTH_015"),
+            "MFA_RESET_FAIL": ("FAILURE", "HIGH", "AUTH_016"),
             "ERROR": ("FAILURE", "HIGH", "AUTH_999"),
     }
 

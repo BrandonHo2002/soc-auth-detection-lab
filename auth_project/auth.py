@@ -1,8 +1,5 @@
-import datetime
 import getpass
-import json
 import os
-import random
 import re
 import sqlite3
 import sys
@@ -11,56 +8,12 @@ import bcrypt
 import pyotp
 import qrcode
 from auth_db import create_user_record, db_connect, get_user, update_user_field
+from logger import generate_ip, log_event
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
-LOG_DIR = os.path.join(PROJECT_ROOT, "logs")
-AUTH_LOG = os.path.join(LOG_DIR, "auth.log")
 CONFIG_DIR = os.path.join(PROJECT_ROOT, "config")
 PEPPER_FILE = os.path.join(CONFIG_DIR, "auth_pepper.txt")
-
-os.makedirs(LOG_DIR, exist_ok=True)
-
-# Simulated IP for Logging/demo purposes
-def generate_ip():
-    return f"192.168.1.{random.randint(1, 255)}"
-
-
-def log_event(event, user, src_ip=None, details=None, status=None):
-    event_map = {
-            "LOGIN_SUCCESS": ("SUCCESS", "LOW", "AUTH_001"),
-            "LOGIN_FAIL": ("FAILURE", "MEDIUM", "AUTH_002"),
-            "ACCOUNT_LOCK": ("WARNING", "HIGH", "AUTH_003"),
-            "MFA_FAIL": ("FAILURE", "HIGH", "AUTH_004"),
-            "MFA_SUCCESS": ("SUCCESS", "LOW", "AUTH_005"),
-            "INPUT_REJECT": ("WARNING", "HIGH", "AUTH_006"),
-            "USER_REGISTER": ("SUCCESS", "LOW", "AUTH_007"),
-            "USER_REGISTER_FAIL": ("FAILURE", "MEDIUM", "AUTH_008"),
-            "PASSWORD_CHANGE": ("SUCCESS", "LOW", "AUTH_009"),
-            "ACCOUNT_UNLOCK": ("SUCCESS", "MEDIUM", "AUTH_010"),
-            "MFA_DISABLE": ("WARNING", "MEDIUM", "AUTH_011"),
-            "MFA_DISABLE_FAIL": ("FAILURE", "HIGH", "AUTH_012"),
-            "ACCOUNT_LOCKED_ACTIVE": ("WARNING", "MEDIUM", "AUTH_013"),
-            "PASSWORD_CHANGE_CANCEL": ("INFO", "LOW", "AUTH_014"),
-    }
-
-    default_status, severity, event_id = event_map.get(
-        event, ("INFO", "LOW", "AUTH_000")
-    )
-
-    log = {
-        "_time": datetime.datetime.now().isoformat(),
-        "event": event,
-        "event_id": event_id,
-        "user": user,
-        "src_ip": src_ip or generate_ip(),
-        "status": status or default_status,
-        "severity": severity,
-        "details": details or "",
-    }
-
-    with open(AUTH_LOG, "a") as f:
-        f.write(json.dumps(log) + "\n")
 
 
 def enable_mfa(username):
@@ -83,12 +36,12 @@ def enable_mfa(username):
 
     choice = input("Select option (1 or 2): ").strip()
 
-    if choice not in {"1", "2"}:
-        print("Invalid choice")
-        return
+    while choice not in {"1", "2"}:
+        choice = input("Select option (1 or 2): ").strip()
 
     secret = pyotp.random_base32()
 
+    # NOTE: In production, MFA secrets should be encrypted at rest
     update_user_field(username, "mfa_secret", secret)
 
     totp = pyotp.TOTP(secret)
@@ -96,26 +49,78 @@ def enable_mfa(username):
     if choice == "1":
         uri = totp.provisioning_uri(name=username, issuer_name="AuthProject")
 
+        QR_DIR = os.path.join(PROJECT_ROOT, "generated_qr")
+        os.makedirs(QR_DIR, exist_ok=True)
+
         img = qrcode.make(uri)
-        qr_path = os.path.join(BASE_DIR, f"{username}_mfa_qr.png")
+        qr_path = os.path.join(QR_DIR, f"{username}_mfa_qr.png")
         img.save(qr_path)
 
         print("\nMFA enabled using QR code.")
-        print("Scan this QR code with google Authenticator:")
+        print("Scan this QR code with Google Authenticator:")
         print(f"Saved as {qr_path}")
 
     else:
         print("\nMFA enabled using manual secret.")
         print("Enter this key into Google Authenticator:")
-        print(f"your secret key is: {format_secret(secret)}")
+        print(f"Your secret key is: {format_secret(secret)}")
     print("\nMFA setup complete")
 
+
+def reset_mfa(username):
+    record = get_user(username)
+
+    if not record:
+        print("User does not exist.")
+        return
+
+    print("\n=== MFA Reset Confirmation ===")
+
+    # Step 1: require admin password confirmation
+    password = getpass.getpass("Confirm your password: ")
+    peppered = password + PEPPER
+
+    stored = record["password"]
+
+    if isinstance(stored, memoryview):
+        stored = stored.tobytes()
+    elif isinstance(stored, str):
+        stored = stored.encode("utf-8")
+
+    if not bcrypt.checkpw(peppered.encode("utf-8"), stored):
+        print("Incorrect password. MFA reset denied.")
+        log_event(
+            "MFA_RESET_FAIL",
+            username,
+            src_ip=generate_ip(),
+            details="wrong_admin_password"
+        )
+        return
+
+    # Step 2: optional warning for admin accounts
+    if record["role"] == "admin":
+        print("Warning: Resetting MFA for ADMIN account.")
+
+    # Step 3: reset MFA
+    update_user_field(username, "mfa_secret", None)
+
+    src_ip = generate_ip()
+
+    log_event(
+        "MFA_RESET",
+        username,
+        src_ip=src_ip,
+        details="mfa_reset_after_password_confirmation"
+    )
+
+    print("\nMFA has been reset successfully.")
+    print("User will be required to reconfigure MFA on next login.")
 
 def disable_mfa(username):
     record = get_user(username)
 
     if not record:
-        print("User not found")
+        print("Invalid username or password")
         return
     if record["role"] == "admin":
         print("Admin cannot disable MFA.")
@@ -130,13 +135,15 @@ def disable_mfa(username):
     elif isinstance(stored, str):
         stored = stored.encode("utf-8")
 
+    src_ip = generate_ip()
+
     if not bcrypt.checkpw(peppered.encode(), stored):
         print("Password incorrect.")
-        log_event("MFA_DISABLE_FAIL", username, status="FAILURE")
+        log_event("MFA_DISABLE_FAIL", username, src_ip=src_ip, details="wrong_password")
         return
 
     update_user_field(username, "mfa_secret", None)
-    log_event("MFA_DISABLE", username, status="SUCCESS")
+    log_event("MFA_DISABLE", username, src_ip=src_ip, details="user_disabled_mfa")
     print("MFA has been disabled.")
 
 
@@ -171,14 +178,6 @@ def looks_malicious(input_string):
             return True
 
     return False
-
-
-def validate_input(username, password):
-    if not username or not password:
-        return False
-    if looks_malicious(username) or looks_malicious(password):
-        return False
-    return True
 
 
 def validate_username(username):
@@ -226,7 +225,7 @@ def validate_password(password):
 
 def load_pepper():
     try:
-        with open(PEPPER_FILE, "r") as f:
+        with open(PEPPER_FILE, "r", encoding="utf-8") as f:
             return f.read().strip()
     except FileNotFoundError:
         print("Error: Pepper file missing!")
@@ -248,7 +247,7 @@ def create_user():
     if looks_malicious(username):
         print("Invalid username. Input rejected for security.")
         log_event(
-            "INPUT_REJECT", username, details="sql_injection_attempt", status="WARNING"
+            "INPUT_REJECT", username, details="suspicious_input_pattern"
         )
         time.sleep(1)
         return
@@ -261,7 +260,7 @@ def create_user():
     password = getpass.getpass("enter a new password: ")
     confirm = getpass.getpass("Confirm your password: ")
     if password != confirm:
-        print("password do not match")
+        print("Passwords do not match")
         time.sleep(1)
         return
     valid, msg = validate_password(password)
@@ -275,10 +274,10 @@ def create_user():
     try:
         create_user_record(username, hashed)
         print("User created successfully!")
-        log_event("USER_REGISTER", username, status="SUCCESS")
+        log_event("USER_REGISTER", username, details="new_user_created")
     except sqlite3.IntegrityError:
         print("Username already exists")
-        log_event("USER_REGISTER_FAIL", username, status="FAILURE")
+        log_event("USER_REGISTER_FAIL", username, details="username_exists")
         time.sleep(1)
 
 
@@ -289,7 +288,7 @@ def handle_lockout(username, record):
         if current_time < record["lockout_until"]:
             cooldown_left = record["lockout_until"] - current_time
             print(f"Try again in {cooldown_left} seconds.")
-            log_event("ACCOUNT_LOCKED_ACTIVE", username)
+            log_event("ACCOUNT_LOCKED_ACTIVE", username, details="account_still_locked")
             return False
         else:
             update_user_field(username, "locked", 0)
@@ -314,8 +313,8 @@ def check_password(username, password, record, src_ip):
         failed_attempts = record["failed_attempts"] + 1
         update_user_field(username, "failed_attempts", failed_attempts)
 
-        print("Incorrect password")
-        log_event("LOGIN_FAIL", username, src_ip=src_ip, details=f"wrong_password_attempt_{failed_attempts}", status="FAILURE")
+        print("Invalid username or password")
+        log_event("LOGIN_FAIL", username, src_ip=src_ip, details=f"wrong_password_attempt_{failed_attempts}")
 
         if failed_attempts >= 3:
             lock_duration = 300
@@ -324,7 +323,7 @@ def check_password(username, password, record, src_ip):
             update_user_field(username, "lockout_until", new_lockout)
 
             print(f"Account locked for {lock_duration} seconds.")
-            log_event("ACCOUNT_LOCK", username, src_ip=src_ip, details="too_many_attempts", status="WARNING")
+            log_event("ACCOUNT_LOCK", username, src_ip=src_ip, details="too_many_attempts")
 
         return False
 
@@ -336,26 +335,35 @@ def handle_mfa(username, record, src_ip):
     mfa_secret = record["mfa_secret"]
 
     if role == "admin" and not mfa_secret:
-        print("Admin must enable MFA before continuing. Use option 4 from main menu.")
-        return False
+        print("Admin has no MFA configured. You must set it up now.")
+        enable_mfa(username)
+
+        # reload updated user
+        record = get_user(username)
+        mfa_secret = record["mfa_secret"]
+
+        if not mfa_secret:
+            print("MFA setup failed.")
+            return False
 
     if not mfa_secret:
-        return True  # no MFA required
+        return True
 
     totp = pyotp.TOTP(mfa_secret)
     code = input("Enter 6-digit MFA code: ").strip()
 
     if not code.isdigit() or len(code) != 6:
         print("Invalid MFA format")
+        log_event("MFA_FAIL", username, src_ip=src_ip, details="invalid_format")
         return False
 
     if not totp.verify(code, valid_window=1):
         print("Incorrect MFA code")
-        log_event("MFA_FAIL", username, src_ip=src_ip, status="FAILURE")
+        log_event("MFA_FAIL", username, src_ip=src_ip, details="invalid_mfa_code")
         return False
 
     print("\nMFA verified")
-    log_event("MFA_SUCCESS", username, src_ip=src_ip, status="SUCCESS")
+    log_event("MFA_SUCCESS", username, src_ip=src_ip, details="mfa_verified")
     return True
 
 
@@ -366,18 +374,17 @@ def login_user():
         src_ip = generate_ip()
         if looks_malicious(username) or looks_malicious(password):
             print("Invalid input.")
-            log_event("INPUT_REJECT", username, src_ip=src_ip, status="WARNING", details="malicious_input")
+            log_event("INPUT_REJECT", username, src_ip=src_ip, details="malicious_input")
             return None, None
 
         record = get_user(username)
 
         if not record:
-            print("User not found.")
+            print("Invalid username or password")
             log_event(
                 "LOGIN_FAIL",
                 username,
                 src_ip=src_ip,
-                status="FAILURE",
                 details="unknown_user"
             )
             return None, None
@@ -389,24 +396,24 @@ def login_user():
             return None, None
 
         if not handle_mfa(username, record, src_ip):
-            log_event("LOGIN_FAIL", username, src_ip=src_ip, status="FAILURE", details="mfa_failed")
+            log_event("LOGIN_FAIL", username, src_ip=src_ip, details="mfa_failed")
             return None, None
 
         update_user_field(username, "failed_attempts", 0)
         update_user_field(username, "locked", 0)
         update_user_field(username, "lockout_until", 0)
 
-        log_event("LOGIN_SUCCESS", username, src_ip=src_ip, status="SUCCESS")
+        log_event("LOGIN_SUCCESS", username, src_ip=src_ip)
 
         return (record["role"], username)
 
     except Exception as e:
-        print(f"[DEBUG] login error: {e}")
-        raise
+        log_event("ERROR", username if 'username' in locals() else "unknown", details=str(e))
+        print("An unexpected error occurred during login.")
 
 
 def update_password(username):
-    print("\n===Update Password===")
+    print("\n=== Update Password ===")
 
     oldpass = getpass.getpass("Enter old password: ")
 
@@ -433,7 +440,7 @@ def update_password(username):
     newpass = getpass.getpass("Enter new password (leave blank to cancel): ")
 
     if not newpass:
-        log_event("PASSWORD_CHANGE_CANCEL", username, status="INFO")
+        log_event("PASSWORD_CHANGE_CANCEL", username)
         return
 
     valid, msg = validate_password(newpass)
@@ -444,7 +451,7 @@ def update_password(username):
     confirm = getpass.getpass("Confirm new password: ")
 
     if newpass != confirm:
-        print("Password do not match.")
+        print("Passwords do not match.")
         return
 
     peppered_new = newpass + PEPPER
@@ -460,24 +467,28 @@ def update_password(username):
             conn.commit()
 
             print("Password successfully updated.")
-            log_event("PASSWORD_CHANGE", username, status="SUCCESS")
+            log_event("PASSWORD_CHANGE", username, details="password_updated")
     except Exception as e:
         log_event(
             "ERROR",
             username,
-            details=f"update_password_failed: {str(e)}",
-            status="ERROR",
+            details=f"update_password_failed: {str(e)}"
         )
-        print("password update failed")
+        print("Password update failed")
 
 
 def unlock_user():
     print("\n===Which user you want to unlock===")
-    target_user = input("Enter the username to unlock: ")
+    target_user = input("Enter the username to unlock: ").strip()
 
     if looks_malicious(target_user):
         print("Invalid input.")
-        log_event("INPUT_REJECT", target_user, details="sql_injection_pattern")
+        log_event(
+            "INPUT_REJECT",
+            target_user,
+            src_ip=generate_ip(),
+            details="suspicious_input_pattern"
+        )
         return
 
     user = get_user(target_user)
@@ -495,7 +506,7 @@ def unlock_user():
     update_user_field(target_user, "lockout_until", 0)
 
     print(f"{target_user}'s account has been unlocked.")
-    log_event("ACCOUNT_UNLOCK", target_user, details="unlocked_by_admin", status="SUCCESS")
+    log_event("ACCOUNT_UNLOCK", target_user, details="unlocked_by_admin")
 
 
 def login_page(username):
@@ -504,7 +515,8 @@ def login_page(username):
         print("1. Change Password")
         print("2. Return to Login")
         print("3. Exit")
-        print("4. Disable MFA")
+        print("4. Enable MFA")
+        print("5. Disable MFA")
         choice = input("Enter an option: ")
 
         if choice == "1":
@@ -514,6 +526,8 @@ def login_page(username):
         elif choice == "3":
             return "exit"
         elif choice == "4":
+            enable_mfa(username)
+        elif choice == "5":
             disable_mfa(username)
         else:
             print("Invalid option. Try again.")
@@ -526,7 +540,8 @@ def admin_page(username):
         print("2. Change Password")
         print("3. Unlock User")
         print("4. Return to Login")
-        print("5. Exit")
+        print("5. Reset MFA (force re-enrollment)")
+        print("6. Exit")
         choice = input("Enter an option: ")
 
         if choice == "1":
@@ -538,20 +553,23 @@ def admin_page(username):
         elif choice == "4":
             return "logout"
         elif choice == "5":
+            target_user = input("Enter username to reset MFA: ").strip()
+            reset_mfa(target_user)
+        elif choice == "6":
             print("Goodbye!")
             return "exit"
         else:
-            print("Invalid option. try again.")
+            print("Invalid option. Try again.")
 
 
 def main():
     while True:
         print("\n=== Authentication System ===")
-        print("\n===Login Page ===")
+        print("===Login Page ===")
         print("1. Register new user")
         print("2. Login")
         print("3. Exit")
-        print("4. Enable MFA")
+
         choice = input("Enter an option: ")
 
         if choice == "1":
@@ -573,9 +591,6 @@ def main():
         elif choice == "3":
             print("Goodbye!")
             sys.exit()
-        elif choice == "4":
-            user = input("Enter your username to enable MFA: ")
-            enable_mfa(user)
         else:
             print("Invalid option. Try again")
 
