@@ -213,8 +213,8 @@ These visualizations simulate how a SOC analyst monitors authentication activity
 ## Example Dashboard Screenshots
 
 ![Dashboard Overview](screenshots/dashboard_overview.png)
-![Suspicious Logins](screenshots/suspicious_logins.png)
-![Event Breakdown](screenshots/event_breakdown.png)
+![Suspicious Logins](screenshots/suspicious_detection.png)
+![Event Breakdown](screenshots/investigation.png)
 
 
 ## Project Structure
