@@ -58,7 +58,22 @@ SPL queries are used to correlate authentication events and identify suspicious 
 
 ### 1. Authentication System (Log Generation)
 
-Before running the system for the first time, initialize the database:
+Before running the system for the first time, create and activate a virtual environment:
+
+Windows (PowerShell):
+
+```bash
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Then initialize the database:
 
 ```bash
 python auth_project/init_db.py

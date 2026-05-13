@@ -39,12 +39,25 @@ This project demonstrates practical skills relevant to an entry-level Security A
 
 Follow these steps to run the project locally:
 
-1. Initialize the database:
+1. Create and activate a virtual environment:
+
+   Windows (PowerShell):
+   ```bash
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+    ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Initialize the database:
    ```bash
    python auth_project/init_db.py
    ```
 
-2. Create an admin account:
+4. Create an admin account:
    ```bash 
    python auth_project/create_admin.py
    ```
@@ -52,7 +65,7 @@ Follow these steps to run the project locally:
 
    Admin accounts are required to configure MFA on first login using a TOTP authenticator application such as Google Authenticator.
 
-3. Run the authentication system:
+5. Run the authentication system:
    ```bash
    python auth_project/auth.py
    ```
@@ -65,7 +78,7 @@ Follow these steps to run the project locally:
 
    These logs can then be ingested into Splunk for monitoring and analysis.
 
-4. (Optional) Run the local detection monitor:
+6. (Optional) Run the local detection monitor:
    ```bash
    python auth_project/log_summary.py
    ```
