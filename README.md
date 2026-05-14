@@ -39,7 +39,7 @@ This project demonstrates practical skills relevant to an entry-level Security A
 
 Create a `config/auth_pepper.txt` file containing a secret value used for password hashing.
 
-You can copy or rename `auth_pepper.txt.example` to:
+Copy or rename `auth_pepper.txt.example` to:
 
 `config/auth_pepper.txt`
 
@@ -49,7 +49,9 @@ The application expects the file to be named exactly:
 
 Example:
 
+```text
 mysecretpepper123
+```
 
 ## Getting Started
 
