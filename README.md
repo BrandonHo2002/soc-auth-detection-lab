@@ -35,6 +35,22 @@ This project demonstrates practical skills relevant to an entry-level Security A
 * qrcode
 * scikit-learn (experimental anomaly detection concepts)
 
+## Setup Notes
+
+Create a `config/auth_pepper.txt` file containing a secret value used for password hashing.
+
+You can copy or rename `auth_pepper.txt.example` to:
+
+`config/auth_pepper.txt`
+
+The application expects the file to be named exactly:
+
+`config/auth_pepper.txt`
+
+Example:
+
+mysecretpepper123
+
 ## Getting Started
 
 Follow these steps to run the project locally:
@@ -86,22 +102,6 @@ Follow these steps to run the project locally:
    This script continuously monitors authentication logs and generates local alerts for suspicious behaviour.
 
    For simplicity, the local monitoring script performs repeated analysis of the authentication log file rather than incremental log streaming.
-
-## Setup Notes
-
-Create a `config/auth_pepper.txt` file containing a secret value used for password hashing.
-
-You can copy or rename `auth_pepper.txt.example` to:
-
-`config/auth_pepper.txt`
-
-The application expects the file to be named exactly:
-
-`config/auth_pepper.txt`
-
-Example:
-
-mysecretpepper123
 
 ## Threat Model
 
