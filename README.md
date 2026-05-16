@@ -63,7 +63,17 @@ Follow these steps to run the project locally:
    ```bash
    python -m venv .venv
    .\.venv\Scripts\Activate.ps1
-    ```
+   ```
+
+   If PowerShell blocks script execution, run:
+   ```bash
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+   ```
+
+   Then activate the virtual environment again:
+   ```bash
+   .\.venv\Scripts\Activate.ps1
+   ```
 
 2. Install dependencies:
    ```bash
